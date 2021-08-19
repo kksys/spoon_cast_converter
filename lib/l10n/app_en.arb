@@ -1,0 +1,133 @@
+{
+  "@@locale": "en",
+
+  "alertCommonOk": "OK",
+  "@alertCommonOk": {
+    "description": "OK"
+  },
+
+  "alertConflictFileTitle": "File Selection Error",
+  "@alertConflictFileTitle": {
+    "description": "File Selection Error"
+  },
+
+  "alertConflictFileMessage": "You were already added this file into file list. \nPlease select other file. :)",
+  "@alertConflictFileMessage": {
+    "description": "You were already added this file into file list. \\nPlease select other file. :)"
+  },
+
+  "alertFinishConvertSequenceTitle": "Successfully to convert",
+  "@alertFinishConvertSequenceTitle": {
+    "description": "Successfully to convert"
+  },
+
+  "alertFinishConvertSequenceMessage": "Conversion is completed.",
+  "@alertFinishConvertSequenceMessage": {
+    "description": "Conversion is completed."
+  },
+
+  "alertUnsupportedFileTypeTitle": "Unsupported file type",
+  "@alertUnsupportedFileTypeTitle": {
+    "description": "Unsupported file type"
+  },
+
+  "alertUnsupportedFileTypeMessage": "This app does not support the specified file. \nPlease contact to vendor to request to support this file type. :(",
+  "@alertUnsupportedFileTypeMessage": {
+    "description": "This app does not support the specified file. \\nPlease contact to vendor to request to support this file type. :("
+  },
+
+  "alertAvailableVersionTitle": "Update is available",
+  "@alertAvailableVersionTitle": {
+    "description": "Update is available"
+  },
+
+  "alertAvailableVersionMessage": "Update is available. \n\nCurrent version: {currentVersion}\nAvailable version: {availableVersion}\n\nDo you want to download latest one? :)",
+  "@alertAvailableVersionMessage": {
+    "description": "Update is available. \\n\\nCurrent version: {currentVersion}\\nAvailable version: {availableVersion}\\n\\nDo you want to download latest one? :)",
+    "placeholders": {
+      "currentVersion": {
+        "type": "String",
+        "example": "1.0.0"
+      },
+      "availableVersion": {
+        "type": "String",
+        "example": "1.0.1"
+      }
+    }
+  },
+
+  "alertAvailableVersionDownloadButton": "Download...",
+  "@alertAvailableVersionDownloadButton": {
+    "description": "Download..."
+  },
+
+  "alertAvailableVersionAfterwardsButton": "Afterwards",
+  "@alertAvailableVersionAfterwardsButton": {
+    "description": "Afterwards"
+  },
+
+  "alertDownloadingUpdaterTitleWithDownloading": "Downloading now...",
+  "@alertDownloadingUpdaterTitleWithDownloading": {
+    "description": "Downloading now..."
+  },
+
+  "alertDownloadingUpdaterMessageWithDownloading": "Downloading now... \nPlease wait few minutes for downloading new version package.",
+  "@alertDownloadingUpdaterMessageWithDownloading": {
+    "description": "Downloading now... \\nPlease wait few minutes for downloading new version package."
+  },
+
+  "alertDownloadingUpdaterTitleWithDownloaded": "Download is completed",
+  "@alertDownloadingUpdaterTitleWithDownloaded": {
+    "description": "Download is completed"
+  },
+
+  "alertDownloadingUpdaterMessageWithDownloaded": "Download is completed. \nPlease press \"Exit...\" button to update.",
+  "@alertDownloadingUpdaterMessageWithDownloaded": {
+    "description": "Download is completed. \\nPlease press \\\"Exit...\\\" button to update."
+  },
+
+  "alertDownloadingUpdaterExitButton": "Exit...",
+  "@alertDownloadingUpdaterExitButton": {
+    "description": "Exit..."
+  },
+
+  "appSelectButton": "Select...",
+  "@appSelectButton": {
+    "description": "Select..."
+  },
+
+  "appDeleteButton": "Delete",
+  "@appDeleteButton": {
+    "description": "Delete"
+  },
+
+  "appStartToConvertButton": "Start to convert",
+  "@appStartToConvertButton": {
+    "description": "Start to convert"
+  },
+
+  "appDurationLabel": "Duration:",
+  "@appDurationLabel": {
+    "description": "Duration:"
+  },
+
+  "appSampleRatesLabel": "Sample retes:",
+  "@appSampleRatesLabel": {
+    "description": "Sample retes:"
+  },
+
+  "appBitRatesLabel": "Bit rates:",
+  "@appBitRatesLabel": {
+    "description": "Bit rates:"
+  },
+
+  "appChannelsLabel": "Channels:",
+  "@appChannelsLabel": {
+    "description": "Channels:"
+  },
+
+  "appCodecLabel": "Codec:",
+  "@appCodecLabel": {
+    "description": "Codec:"
+  }
+}

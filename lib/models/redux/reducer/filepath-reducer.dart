@@ -1,0 +1,99 @@
+// Package imports:
+import 'package:redux/redux.dart';
+
+// Project imports:
+import 'package:spoon_cast_converter/models/redux/action/app-actions.dart';
+import 'package:spoon_cast_converter/models/redux/app-state.dart';
+
+final filepathReducer = combineReducers<AppState>([
+  new TypedReducer<AppState, AddInputFilePathListAction>(_addInputFilePathListReducer),
+  new TypedReducer<AppState, RemoveInputFilePathListAction>(_removeInputFilePathListReducer),
+  new TypedReducer<AppState, SelectInputFilePathListAction>(_selectInputFilePathListReducer),
+  new TypedReducer<AppState, UpdateFileInfoAction>(_updateFileInfoReducer),
+  new TypedReducer<AppState, UpdateConvertingIndexAction>(_updateConvertingIndexReducer),
+  new TypedReducer<AppState, UpdateConvertingStatusAction>(_updateConvertingStatusReducer),
+  new TypedReducer<AppState, UpdateModalInfoAction>(_updateModalInfo),
+]);
+
+AppState _addInputFilePathListReducer(
+  AppState state,
+  AddInputFilePathListAction action,
+) {
+  List<String> inputFilePathList = [...state.inputFilePathList, action.filepath];
+  return AppState.fromMap({
+    ...state.toMap(),
+    'inputFilePathList': inputFilePathList,
+  });
+}
+
+AppState _removeInputFilePathListReducer(
+  AppState state,
+  RemoveInputFilePathListAction action,
+) {
+  int selectedIndex = state.selectedIndex;
+  List<String> inputFilePathList = [...state.inputFilePathList];
+  AudioFileInfo? fileInfo = state.fileInfo;
+
+  if (inputFilePathList.asMap().containsKey(action.index)) {
+    inputFilePathList.removeAt(action.index);
+    selectedIndex = -1;
+    fileInfo = null;
+  }
+
+  return AppState.fromMap({
+    ...state.toMap(),
+    'selectedIndex': selectedIndex,
+    'inputFilePathList': inputFilePathList,
+    'fileInfo': fileInfo?.toMap()
+  });
+}
+
+AppState _selectInputFilePathListReducer(
+  AppState state,
+  SelectInputFilePathListAction action,
+) {
+  return AppState.fromMap({
+    ...state.toMap(),
+    'selectedIndex': action.index,
+  });
+}
+
+AppState _updateFileInfoReducer(
+  AppState state,
+  UpdateFileInfoAction action,
+) {
+  return AppState.fromMap({
+    ...state.toMap(),
+    'fileInfo': action.fileInfo?.toMap(),
+  });
+}
+
+AppState _updateConvertingIndexReducer(
+  AppState state,
+  UpdateConvertingIndexAction action,
+) {
+  return AppState.fromMap({
+    ...state.toMap(),
+    'convertingIndex': action.convertingIndex,
+  });
+}
+
+AppState _updateConvertingStatusReducer(
+  AppState state,
+  UpdateConvertingStatusAction action,
+) {
+  return AppState.fromMap({
+    ...state.toMap(),
+    'convertingStatus': action.convertingStatus.toMap(),
+  });
+}
+
+AppState _updateModalInfo(
+  AppState state,
+  UpdateModalInfoAction action,
+) {
+  return AppState.fromMap({
+    ...state.toMap(),
+    'modalInfo': action.modalInfo.toMap(),
+  });
+}

@@ -1,0 +1,35 @@
+{
+  "@@locale": "ja",
+
+  "alertCommonOk": "OK",
+
+  "alertConflictFileTitle": "ファイル選択エラー",
+  "alertConflictFileMessage": "既にこのファイルは選択されています。\n他のファイルを選択してください。",
+
+  "alertFinishConvertSequenceTitle": "変換完了",
+  "alertFinishConvertSequenceMessage": "変換が完了しました。",
+
+  "alertUnsupportedFileTypeTitle": "未サポートファイル",
+  "alertUnsupportedFileTypeMessage": "このアプリは指定されたファイルに対応しておりません。\nこのファイルタイプのサポートをご希望の場合は、ベンダーにお問い合わせください。",
+
+  "alertAvailableVersionTitle": "新しいバージョンが利用可能です",
+  "alertAvailableVersionMessage": "新しいバージョンが利用可能です。\n\n現在のバージョン: {currentVersion}\n利用可能なバージョン: {availableVersion}\n\nダウンロードしますか？",
+  "alertAvailableVersionDownloadButton": "ダウンロード...",
+  "alertAvailableVersionAfterwardsButton": "あとで",
+
+  "alertDownloadingUpdaterTitleWithDownloading": "ダウンロード中...",
+  "alertDownloadingUpdaterMessageWithDownloading": "ダウンロードしています...\n新しいバージョンのパッケージのダウンロードが完了するまでしばらくお待ちください...",
+  "alertDownloadingUpdaterTitleWithDownloaded": "ダウンロード完了",
+  "alertDownloadingUpdaterMessageWithDownloaded": "ダウンロードが完了しました。\n更新するために「終了...」ボタンを押してください。",
+  "alertDownloadingUpdaterExitButton": "終了...",
+
+  "appSelectButton": "選択...",
+  "appDeleteButton": "削除",
+  "appStartToConvertButton": "変換開始",
+
+  "appDurationLabel": "再生時間:",
+  "appSampleRatesLabel": "サンプリング周波数:",
+  "appBitRatesLabel": "ビットレート:",
+  "appChannelsLabel": "チャンネル数:",
+  "appCodecLabel": "コーデック:"
+}

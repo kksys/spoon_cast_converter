@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  Runner
+
+  Created by KK Systems on 2021/08/09.
+  
+*/
+
+/* Localized versions of Info.plist keys */
+CFBundleDisplayName = "Spoon CAST Converter";

@@ -43,6 +43,13 @@ void Function(
       }
     } catch (e) {
       print(e);
+      if (!action.launchTime) {
+        store.dispatch(UpdateModalInfoAction(
+          modalInfo: ModalInfo(
+            modalType: ModalType.MODAL_FAILED_TO_UPDATE,
+          ),
+        ));
+      }
     }
   };
 }
@@ -146,6 +153,11 @@ void Function(
       }
     } catch (e) {
       print(e);
+      store.dispatch(UpdateModalInfoAction(
+        modalInfo: ModalInfo(
+          modalType: ModalType.MODAL_FAILED_TO_UPDATE,
+        ),
+      ));
     }
   };
 }

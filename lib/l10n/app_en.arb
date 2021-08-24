@@ -91,6 +91,16 @@
     "description": "Exit..."
   },
 
+  "alertFailedToUpdateTitle": "Failed to update",
+  "@alertFailedToUpdateTitle": {
+    "description": "Failed to update"
+  },
+
+  "alertFailedToUpdateMessage": "Failed to update. \nPlease check the network status and do again. \nPlease contact to vendor if you can not resolve problem.",
+  "@alertFailedToUpdateMessage": {
+    "description": "Failed to update. \\nPlease check the network status and do again. \\nPlease contact to vendor if you can not resolve problem."
+  },
+
   "appSelectButton": "Select...",
   "@appSelectButton": {
     "description": "Select..."

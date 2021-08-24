@@ -8,6 +8,7 @@ import 'package:redux/redux.dart';
 // Project imports:
 import 'package:spoon_cast_converter/components/organisms/dialogs/available-update-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/downloading-update-dialog.dart';
+import 'package:spoon_cast_converter/components/organisms/dialogs/failed-to-update-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/file-conflict-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/finish-convert-sequence-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/unsupported-filetype-dialog.dart';
@@ -43,6 +44,9 @@ class _AppModalDialogState extends State<StatefulWidget> {
             break;
           case ModalType.MODAL_DOWNLOADING_UPDATE:
             widget = AppDownloadingUpdateDialog();
+            break;
+          case ModalType.MODAL_FAILED_TO_UPDATE:
+            widget = AppFailedToUpdateDialog();
             break;
           default:
             widget = SizedBox.shrink();

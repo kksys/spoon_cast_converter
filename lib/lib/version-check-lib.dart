@@ -120,6 +120,7 @@ class VersionCheckLibImpl implements VersionCheckLib {
       this.fetchedLatestInfo = result;
     } catch (error) {
       this.fetchedLatestInfo = {};
+      throw error;
     }
   }
 

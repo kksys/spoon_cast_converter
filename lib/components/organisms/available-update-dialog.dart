@@ -40,6 +40,7 @@ class _AppAvailableUpdateDialogState extends State<AppAvailableUpdateDialog> {
             buttonSize: ButtonSize.small,
             child: AppText(localizations.alertAvailableVersionDownloadButton),
             onPressed: () {
+              Navigator.of(context).pop();
               viewModel.updateModalInfo(const ModalInfo(modalType: ModalType.MODAL_HIDDEN));
               viewModel.startUpdateSequence();
             },
@@ -48,6 +49,7 @@ class _AppAvailableUpdateDialogState extends State<AppAvailableUpdateDialog> {
             buttonSize: ButtonSize.small,
             child: AppText(localizations.alertAvailableVersionAfterwardsButton),
             onPressed: () {
+              Navigator.of(context).pop();
               viewModel.updateModalInfo(const ModalInfo(modalType: ModalType.MODAL_HIDDEN));
             },
           ),

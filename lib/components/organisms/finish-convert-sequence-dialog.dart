@@ -37,6 +37,7 @@ class _AppFinishConvertSequenceDialogState extends State<AppFinishConvertSequenc
             buttonSize: ButtonSize.small,
             child: AppText(localizations.alertCommonOk),
             onPressed: () {
+              Navigator.of(context).pop();
               viewModel.updateModalInfo(const ModalInfo(modalType: ModalType.MODAL_HIDDEN));
             },
           ),

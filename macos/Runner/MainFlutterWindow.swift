@@ -20,6 +20,10 @@ class MainFlutterWindow: NSWindow {
 
     customToolbar.sizeMode = .regular
 
+    if #available(macOS 11.0, *) {
+      self.toolbarStyle = .unified
+    }
+
     RegisterGeneratedPlugins(registry: flutterViewController)
     
     super.awakeFromNib()

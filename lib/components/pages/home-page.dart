@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
     return MacosScaffold(
       titleBar: TitleBar(
-        height: 35.0,
+        height: kTitleBarHeight,
         centerTitle: true,
         title: const Text('Spoon CAST Converter'),
       ),

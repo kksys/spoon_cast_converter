@@ -58,13 +58,8 @@ class _TopPanelState extends State<TopPanel> {
   }
 
   void _updateModalDialog(BuildContext context, _ViewModel viewModel) {
-    switch (viewModel.modalInfo.modalType) {
-      case ModalType.MODAL_HIDDEN:
-        Navigator.of(context).pop();
-        break;
-      default:
-        _showModalDialog(context);
-        break;
+    if (viewModel.modalInfo.modalType != ModalType.MODAL_HIDDEN) {
+      _showModalDialog(context);
     }
   }
 

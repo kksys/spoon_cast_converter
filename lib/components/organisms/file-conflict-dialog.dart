@@ -37,6 +37,7 @@ class _AppFileConflictDialogState extends State<AppFileConflictDialog> {
             buttonSize: ButtonSize.small,
             child: AppText(localizations.alertCommonOk),
             onPressed: () {
+              Navigator.of(context).pop();
               viewModel.updateModalInfo(const ModalInfo(modalType: ModalType.MODAL_HIDDEN));
             },
           ),

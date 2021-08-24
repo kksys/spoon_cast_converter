@@ -137,6 +137,8 @@
 		192ED27926C03005004EAC6C /* libavcodec.58.134.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavcodec.58.134.100.dylib; path = ../modules/ffmpeg/dist/mac/lib/libavcodec.58.134.100.dylib; sourceTree = "<group>"; };
 		192ED27A26C03005004EAC6C /* libavformat.58.76.100.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libavformat.58.76.100.dylib; path = ../modules/ffmpeg/dist/mac/lib/libavformat.58.76.100.dylib; sourceTree = "<group>"; };
 		1978450D26C886A80079DD9C /* entitlements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
+		1978451026D521660079DD9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1978451226D521670079DD9C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		19B74C0726B6A383006CFE59 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		19B74C0826B6A384006CFE59 /* FFmpegManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FFmpegManager.cpp; path = ffmpeg/FFmpegManager.cpp; sourceTree = "<group>"; };
 		19B74C0926B6A384006CFE59 /* FFmpegManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = FFmpegManager.hpp; path = ffmpeg/FFmpegManager.hpp; sourceTree = "<group>"; };
@@ -144,7 +146,7 @@
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneratedPluginRegistrant.swift; sourceTree = "<group>"; };
 		33CC10ED2044A3C60003C045 /* Spoon CAST Converter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Spoon CAST Converter.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		33CC10F02044A3C60003C045 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		33CC10F02044A3C60003C045 /* AppDelegate.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		33CC10F22044A3C60003C045 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Runner/Assets.xcassets; sourceTree = "<group>"; };
 		33CC10F52044A3C60003C045 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		33CC10F72044A3C60003C045 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Runner/Info.plist; sourceTree = "<group>"; };
@@ -503,6 +505,8 @@
 			isa = PBXVariantGroup;
 			children = (
 				33CC10F52044A3C60003C045 /* Base */,
+				1978451026D521660079DD9C /* en */,
+				1978451226D521670079DD9C /* ja */,
 			);
 			name = MainMenu.xib;
 			path = Runner;

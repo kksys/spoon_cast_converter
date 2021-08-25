@@ -27,6 +27,15 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             }
+        },
+        {
+            "label": "flutter: create dmg",
+            "type": "shell",
+            "command": "./build_scripts/create_dmg.sh",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
         }
     ]
 }

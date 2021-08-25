@@ -26,6 +26,8 @@
   "alertFailedToUpdateTitle": "更新失敗",
   "alertFailedToUpdateMessage": "更新に失敗しました。\nネットワークの状態を確認し、再度実行してください。\nそれでも解決できない場合は、ベンダーにお問い合わせください。",
 
+  "alertLicenseTitle": "サードパーティーソフトウェアライセンス",
+
   "appSelectButton": "選択...",
   "appDeleteButton": "削除",
   "appStartToConvertButton": "変換開始",

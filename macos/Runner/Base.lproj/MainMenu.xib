@@ -328,6 +328,19 @@
                         </items>
                     </menu>
                 </menuItem>
+                <menuItem title="Help" id="DHE-bd-Zlk">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <menu key="submenu" title="Help" id="rn0-jI-hD7">
+                        <items>
+                            <menuItem title="License…" id="3gy-A7-3M6">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showLicenseDialog:" target="-1" id="z6t-5X-cuj"/>
+                                </connections>
+                            </menuItem>
+                        </items>
+                    </menu>
+                </menuItem>
             </items>
             <point key="canvasLocation" x="142" y="-258"/>
         </menu>

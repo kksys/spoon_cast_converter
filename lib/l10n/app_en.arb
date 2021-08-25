@@ -101,6 +101,11 @@
     "description": "Failed to update. \\nPlease check the network status and do again. \\nPlease contact to vendor if you can not resolve problem."
   },
 
+  "alertLicenseTitle": "Third-party software licenses",
+  "@alertLicenseTitle": {
+    "description": "Third-party software licenses"
+  },
+
   "appSelectButton": "Select...",
   "@appSelectButton": {
     "description": "Select..."

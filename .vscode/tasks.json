@@ -4,12 +4,23 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "import sorter",
+            "label": "flutter: import sorter",
             "type": "shell",
-            "command": "flutter pub run import_sorter:main"
+            "command": "flutter pub run import_sorter:main",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
         },
         {
-            "label": "release build",
+            "label": "flutter: generate licenses",
+            "type": "shell",
+            "command": "flutter pub run flutter_oss_licenses:generate.dart && dart run ./build_scripts/generate_ffmpeg_license_list.dart",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
+            "label": "flutter: release build",
             "type": "shell",
             "command": "flutter pub get && flutter build macos --release && ./build_scripts/codesigning.sh",
             "group": "build",

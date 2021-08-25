@@ -14,6 +14,7 @@ if [ "a${DEVELOPER_ID}z" != "az" -a "a${TARGET_PACKAGE}z" != "az" ]; then
             --option runtime \
             --entitlements ./macos/Runner/entitlements.plist \
             --timestamp \
+            --all-architectures \
             "${TARGET_PACKAGE}"
 else
     echo "You need to create .conf.sh file in build_scripts directory,"

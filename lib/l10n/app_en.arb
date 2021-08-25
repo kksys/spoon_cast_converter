@@ -66,6 +66,16 @@
     "description": "Afterwards"
   },
 
+  "alertAlreadyLatestVersionTitle": "No need to update",
+  "@alertAlreadyLatestVersionTitle": {
+    "description": "No need to update"
+  },
+
+  "alertAlreadyLatestVersionMessage": "It is already installed the latest version. :)",
+  "@alertAlreadyLatestVersionMessage": {
+    "description": "It is already installed the latest version. :)"
+  },
+
   "alertDownloadingUpdaterTitleWithDownloading": "Downloading now...",
   "@alertDownloadingUpdaterTitleWithDownloading": {
     "description": "Downloading now..."

@@ -17,6 +17,9 @@
   "alertAvailableVersionDownloadButton": "ダウンロード...",
   "alertAvailableVersionAfterwardsButton": "あとで",
 
+  "alertAlreadyLatestVersionTitle": "アップデートの必要なし",
+  "alertAlreadyLatestVersionMessage": "既に最新のアップデートが適用されています。",
+
   "alertDownloadingUpdaterTitleWithDownloading": "ダウンロード中...",
   "alertDownloadingUpdaterMessageWithDownloading": "ダウンロードしています...\n新しいバージョンのパッケージのダウンロードが完了するまでしばらくお待ちください...",
   "alertDownloadingUpdaterTitleWithDownloaded": "ダウンロード完了",

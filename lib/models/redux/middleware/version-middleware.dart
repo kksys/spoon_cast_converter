@@ -30,7 +30,7 @@ void Function(
       final currentVersion = await versionLib.getCurrentVersion();
       final availableVersion = await versionLib.getAvailableUpdate();
 
-      if (!action.launchTime || availableVersion != null) {
+      if (availableVersion != null) {
         store.dispatch(UpdateModalInfoAction(
           modalInfo: ModalInfo(
             modalType: ModalType.MODAL_AVAILABLE_UPDATE,
@@ -38,6 +38,12 @@ void Function(
               'currentVersion': currentVersion,
               'availableVersion': availableVersion,
             },
+          ),
+        ));
+      } else if (!action.launchTime) {
+        store.dispatch(UpdateModalInfoAction(
+          modalInfo: ModalInfo(
+            modalType: ModalType.MODAL_ALREADY_LATEST_VERSION,
           ),
         ));
       }

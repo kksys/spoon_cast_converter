@@ -25,6 +25,14 @@ void showCheckForUpdatesDialog({
   store.dispatch(CheckExistAvailableUpdateAction(launchTime: false));
 }
 
+void showLicenseDialog({
+  required Store<AppState> store,
+}) {
+  store.dispatch(UpdateModalInfoAction(
+    modalInfo: ModalInfo(modalType: ModalType.MODAL_LICENSE),
+  ));
+}
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
@@ -65,6 +73,9 @@ class _MyAppState extends State<MyApp> {
     switch (methodCall.method) {
       case 'showCheckForUpdatesDialog':
         showCheckForUpdatesDialog(store: this.widget.store);
+        break;
+      case 'showLicenseDialog':
+        showLicenseDialog(store: this.widget.store);
         break;
       default:
         break;

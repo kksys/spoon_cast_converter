@@ -1279,6 +1279,92 @@ copy_package_to_dist() {
     done
 }
 
+collect_license_files() {
+    pushd $(pwd)
+
+    cd modules/ffmpeg
+
+    if [ ${FFMPEG_ENABLE_FREETYPE} -eq 1 -o ${FFMPEG_ENABLE_ASS} -eq 1 ]; then
+        mkdir -p dist/mac/license/freetype
+        cp ./source/freetype/LICENSE.TXT ./dist/mac/license/freetype/LICENSE
+        echo "${FREETYPE_VERSION}" > ./dist/mac/license/freetype/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_ASS} -eq 1 ]; then
+        # fribidi build
+        mkdir -p dist/mac/license/fribidi
+        cp ./source/fribidi/COPYING ./dist/mac/license/fribidi/LICENSE
+        echo "${FRIBIDI_VERSION}" > ./dist/mac/license/fribidi/VERSION
+
+        # ass build
+        mkdir -p dist/mac/license/ass
+        cp ./source/ass/COPYING ./dist/mac/license/ass/LICENSE
+        echo "${ASS_VERSION}" > ./dist/mac/license/ass/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_AOM} -eq 1 ]; then
+        # aom build
+        mkdir -p dist/mac/license/aom
+        cp ./source/aom/LICENSE ./dist/mac/license/aom/LICENSE
+        echo "${AOM_VERSION}" > ./dist/mac/license/aom/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_DAV1D} -eq 1 ]; then
+        # dav1d build
+        mkdir -p dist/mac/license/dav1d
+        cp ./source/dav1d/COPYING ./dist/mac/license/dav1d/LICENSE
+        echo "${DAV1D_VERSION}" > ./dist/mac/license/dav1d/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_MP3LAME} -eq 1 ]; then
+        # mp3lame build
+        mkdir -p dist/mac/license/mp3lame
+        cp ./source/mp3lame/COPYING ./dist/mac/license/mp3lame/LICENSE
+        echo "${MP3LAME_VERSION}" > ./dist/mac/license/mp3lame/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_OPUS} -eq 1 ]; then
+        # opus build
+        mkdir -p dist/mac/license/opus
+        cp ./source/opus/COPYING ./dist/mac/license/opus/LICENSE
+        echo "${OPUS_VERSION}" > ./dist/mac/license/opus/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_SNAPPY} -eq 1 ]; then
+        # snappy build
+        mkdir -p dist/mac/license/snappy
+        cp ./source/snappy/COPYING ./dist/mac/license/snappy/LICENSE
+        echo "${SNAPPY_VERSION}" > ./dist/mac/license/snappy/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_THEORA} -eq 1 -o ${FFMPEG_ENABLE_VORBIS} -eq 1 ]; then
+        # ogg build
+        mkdir -p dist/mac/license/ogg
+        cp ./source/ogg/COPYING ./dist/mac/license/ogg/LICENSE
+        echo "${OGG_VERSION}" > ./dist/mac/license/ogg/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_THEORA} -eq 1 ]; then
+        # theora build
+        mkdir -p dist/mac/license/theora
+        cp ./source/theora/COPYING ./dist/mac/license/theora/LICENSE
+        cat ./source/theora/LICENSE >> ./dist/mac/license/theora/LICENSE
+        echo "${THEORA_VERSION}" > ./dist/mac/license/theora/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_VORBIS} -eq 1 ]; then
+        # vorbis build
+        mkdir -p dist/mac/license/vorbis
+        cp ./source/vorbis/COPYING ./dist/mac/license/vorbis/LICENSE
+        echo "${VORBIS_VERSION}" > ./dist/mac/license/vorbis/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_VPX} -eq 1 ]; then
+        # vpx build
+        mkdir -p dist/mac/license/vpx
+        cp ./source/vpx/LICENSE ./dist/mac/license/vpx/LICENSE
+        echo "${VPX_VERSION}" > ./dist/mac/license/vpx/VERSION
+    fi
+    if [ ${FFMPEG_ENABLE_FFMPEG} -eq 1 ]; then
+        # ffmpeg build
+        mkdir -p dist/mac/license/ffmpeg
+        cp ./source/ffmpeg/COPYING.LGPLv2.1 ./dist/mac/license/ffmpeg/LICENSE
+        echo "${FFMPEG_VERSION}" > ./dist/mac/license/ffmpeg/VERSION
+    fi
+
+    popd
+}
+
 mount_ramdisk() {
     diskutil eraseDisk HFS+ ${VOLUME_NAME} ${RAMDISK_FILENAME}
 }
@@ -1316,6 +1402,10 @@ main() {
 
     if [ "a${args[0]}z" == "abuildz" -o "a${args[0]}z" == "arebuildz" -o "a${args[0]}z" == "aframeworkz" ]; then
         generate_fat_binary
+    fi
+
+    if [ "a${args[0]}z" == "abuildz" -o "a${args[0]}z" == "arebuildz" -o "a${args[0]}z" == "acollect_licensez" ]; then
+        collect_license_files
     fi
 
     unmount_ramdisk

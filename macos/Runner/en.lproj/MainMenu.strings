@@ -11,6 +11,9 @@
 /* Class = "NSMenu"; title = "Spelling"; ObjectID = "3IN-sU-3Bg"; */
 "3IN-sU-3Bg.title" = "Spelling";
 
+/* Class = "NSMenuItem"; title = "License…"; ObjectID = "3gy-A7-3M6"; */
+"3gy-A7-3M6.title" = "License…";
+
 /* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
 "3rS-ZA-NoH.title" = "Speech";
 
@@ -46,6 +49,9 @@
 
 /* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
 "BOF-NM-1cW.title" = "Preferences…";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "DHE-bd-Zlk"; */
+"DHE-bd-Zlk.title" = "Help";
 
 /* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
 "Dv1-io-Yv7.title" = "Spelling and Grammar";
@@ -166,6 +172,9 @@
 
 /* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
 "rgM-f4-ycn.title" = "Smart Dashes";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "rn0-jI-hD7"; */
+"rn0-jI-hD7.title" = "Help";
 
 /* Class = "NSMenuItem"; title = "Data Detectors"; ObjectID = "tRr-pd-1PS"; */
 "tRr-pd-1PS.title" = "Data Detectors";

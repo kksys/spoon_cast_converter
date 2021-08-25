@@ -11,6 +11,7 @@ import 'package:spoon_cast_converter/components/organisms/dialogs/downloading-up
 import 'package:spoon_cast_converter/components/organisms/dialogs/failed-to-update-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/file-conflict-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/finish-convert-sequence-dialog.dart';
+import 'package:spoon_cast_converter/components/organisms/dialogs/license-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/unsupported-filetype-dialog.dart';
 import 'package:spoon_cast_converter/models/redux/app-state.dart';
 
@@ -47,6 +48,9 @@ class _AppModalDialogState extends State<StatefulWidget> {
             break;
           case ModalType.MODAL_FAILED_TO_UPDATE:
             widget = AppFailedToUpdateDialog();
+            break;
+          case ModalType.MODAL_LICENSE:
+            widget = AppLicenseDialog();
             break;
           default:
             widget = SizedBox.shrink();

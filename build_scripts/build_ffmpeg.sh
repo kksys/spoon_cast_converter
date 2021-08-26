@@ -24,6 +24,8 @@ VORBIS_VERSION="1.3.7"
 VORBIS_REPOSITORY="https://github.com/xiph/vorbis.git"
 VPX_VERSION="1.10.0"
 VPX_REPOSITORY="https://chromium.googlesource.com/webm/libvpx"
+LZMA_VERSION="5.2.5"
+LZMA_REPOSITORY="https://git.tukaani.org/xz.git"
 FFMPEG_VERSION="n4.4"
 FFMPEG_PACKAGE="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/${FFMPEG_VERSION}.tar.gz"
 
@@ -303,6 +305,19 @@ prepare_vpx_sources() {
     popd
 }
 
+prepare_lzma_sources() {
+    pushd $(pwd)
+
+    cd modules/ffmpeg/source
+    if [[ ! -e "lzma" ]]; then
+        git clone ${LZMA_REPOSITORY} lzma
+    fi
+    cd lzma
+    git fetch --all
+    git checkout refs/tags/v${LZMA_VERSION}
+
+    popd
+}
 prepare_ffmpeg_sources() {
     pushd $(pwd)
 
@@ -801,6 +816,47 @@ build_vpx() {
     popd
 }
 
+build_lzma() {
+    pushd $(pwd)
+
+    cd modules/ffmpeg/source/lzma
+
+    local ARCH=$1
+    local TARGET=$2
+
+    make clean >/dev/null 2>&1
+    make distclean >/dev/null 2>&1
+
+    local PREFIX="${INSTALL_PATH}/mac-${ARCH}"
+    if [[ ! -e "${PREFIX}/lib/liblzma.dylib" ]]; then
+        mkdir -p "${PREFIX}"
+
+        local OLD_PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+        export PKG_CONFIG_PATH=${PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}
+
+        ./autogen.sh
+
+        CC=clang \
+        CFLAGS="-mmacosx-version-min=$OSX_VERSION -arch $ARCH -target $TARGET" \
+        LDFLAGS="-mmacosx-version-min=$OSX_VERSION -arch $ARCH -target $TARGET" \
+        ./configure \
+            --prefix=${PREFIX} \
+            --host=${TARGET} \
+            --disable-debug \
+            --disable-dependency-tracking \
+            --disable-silent-rules \
+            --disable-static \
+            --enable-shared
+
+        make check
+        make install
+
+        export PKG_CONFIG_PATH=${OLD_PKG_CONFIG_PATH}
+    fi
+
+    popd
+}
+
 build_ffmpeg() {
     pushd $(pwd)
 
@@ -917,6 +973,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libopus.0.dylib" "@rpath/libopus.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
@@ -942,6 +999,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libopus.0.dylib" "@rpath/libopus.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
@@ -966,6 +1024,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libopus.0.dylib" "@rpath/libopus.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
@@ -988,6 +1047,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libopus.0.dylib" "@rpath/libopus.0.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
@@ -1016,6 +1076,8 @@ generate_fat_binary() {
     done
 
     install_name_tool -id "@rpath/libdav1d.5.dylib" libdav1d.5.dylib
+
+    install_name_tool -id "@rpath/liblzma.5.dylib" liblzma.5.dylib
 
     install_name_tool -id "@rpath/libmp3lame.0.dylib" libmp3lame.0.dylib
 
@@ -1160,6 +1222,12 @@ prepare_sources() {
     fi
     if [ ${FFMPEG_ENABLE_FFMPEG} -eq 1 ]; then
         echo "============================================================================================================"
+        echo "= preparing lzma sources...                                                                                ="
+        echo "============================================================================================================"
+        # prepare lzma sources
+        prepare_lzma_sources
+
+        echo "============================================================================================================"
         echo "= preparing ffmpeg sources...                                                                              ="
         echo "============================================================================================================"
         # prepare ffmpeg sources
@@ -1265,6 +1333,13 @@ build() {
     fi
     if [ ${FFMPEG_ENABLE_FFMPEG} -eq 1 ]; then
         echo "============================================================================================================"
+        echo "= building lzma sources...                                                                                 ="
+        echo "============================================================================================================"
+        # lzma build
+        build_lzma "x86_64" "x86_64-apple-darwin"
+        build_lzma "arm64" "aarch64-apple-darwin"
+
+        echo "============================================================================================================"
         echo "= building ffmpeg sources...                                                                               ="
         echo "============================================================================================================"
         # ffmpeg build
@@ -1356,6 +1431,11 @@ collect_license_files() {
         echo "${VPX_VERSION}" > ./dist/mac/license/vpx/VERSION
     fi
     if [ ${FFMPEG_ENABLE_FFMPEG} -eq 1 ]; then
+        # lzma build
+        mkdir -p dist/mac/license/lzma
+        cp ./source/lzma/COPYING.LGPLv2.1 ./dist/mac/license/lzma/LICENSE
+        echo "${LZMA_VERSION}" > ./dist/mac/license/lzma/VERSION
+
         # ffmpeg build
         mkdir -p dist/mac/license/ffmpeg
         cp ./source/ffmpeg/COPYING.LGPLv2.1 ./dist/mac/license/ffmpeg/LICENSE

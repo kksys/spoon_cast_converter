@@ -61,6 +61,8 @@
 		192ED2A126C03038004EAC6C /* libvorbisfile.3.3.8.dylib in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 192ED27226C03005004EAC6C /* libvorbisfile.3.3.8.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		192ED2A226C0303A004EAC6C /* libvpx.6.dylib in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 192ED27626C03005004EAC6C /* libvpx.6.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		1978450E26C886A80079DD9C /* entitlements.plist in Resources */ = {isa = PBXBuildFile; fileRef = 1978450D26C886A80079DD9C /* entitlements.plist */; };
+		1978451426D7EC620079DD9C /* liblzma.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1978451326D7EC620079DD9C /* liblzma.5.dylib */; };
+		1978451526D7EC620079DD9C /* liblzma.5.dylib in Bundle Framework */ = {isa = PBXBuildFile; fileRef = 1978451326D7EC620079DD9C /* liblzma.5.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		19B74C0A26B6A384006CFE59 /* FFmpegManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19B74C0826B6A384006CFE59 /* FFmpegManager.cpp */; };
 		19C5428126B6F9AA00AB6F32 /* DartBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 19C5428026B6F9AA00AB6F32 /* DartBridge.cpp */; };
 		335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */; };
@@ -91,6 +93,7 @@
 				192ED29726C0302A004EAC6C /* libogg.0.dylib in Bundle Framework */,
 				192ED29C26C03031004EAC6C /* libtheora.0.dylib in Bundle Framework */,
 				192ED29626C03029004EAC6C /* libmp3lame.0.dylib in Bundle Framework */,
+				1978451526D7EC620079DD9C /* liblzma.5.dylib in Bundle Framework */,
 				192ED29226C03023004EAC6C /* libavfilter.7.110.100.dylib in Bundle Framework */,
 				192ED29E26C03034004EAC6C /* libtheoraenc.1.dylib in Bundle Framework */,
 				192ED29926C0302D004EAC6C /* libsnappy.1.1.8.dylib in Bundle Framework */,
@@ -139,6 +142,7 @@
 		1978450D26C886A80079DD9C /* entitlements.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = entitlements.plist; sourceTree = "<group>"; };
 		1978451026D521660079DD9C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		1978451226D521670079DD9C /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		1978451326D7EC620079DD9C /* liblzma.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = liblzma.5.dylib; path = ../modules/ffmpeg/dist/mac/lib/liblzma.5.dylib; sourceTree = "<group>"; };
 		19B74C0726B6A383006CFE59 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		19B74C0826B6A384006CFE59 /* FFmpegManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = FFmpegManager.cpp; path = ffmpeg/FFmpegManager.cpp; sourceTree = "<group>"; };
 		19B74C0926B6A384006CFE59 /* FFmpegManager.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = FFmpegManager.hpp; path = ffmpeg/FFmpegManager.hpp; sourceTree = "<group>"; };
@@ -184,6 +188,7 @@
 				192ED28626C03005004EAC6C /* libvorbisfile.3.3.8.dylib in Frameworks */,
 				192ED28726C03005004EAC6C /* libswresample.3.9.100.dylib in Frameworks */,
 				192ED28926C03005004EAC6C /* libavutil.56.70.100.dylib in Frameworks */,
+				1978451426D7EC620079DD9C /* liblzma.5.dylib in Frameworks */,
 				192ED28A26C03005004EAC6C /* libvpx.6.dylib in Frameworks */,
 				192ED28B26C03005004EAC6C /* libvorbisenc.2.0.12.dylib in Frameworks */,
 				192ED28C26C03005004EAC6C /* libtheoradec.1.dylib in Frameworks */,
@@ -286,6 +291,7 @@
 				192ED27A26C03005004EAC6C /* libavformat.58.76.100.dylib */,
 				192ED27526C03005004EAC6C /* libavutil.56.70.100.dylib */,
 				192ED26E26C03004004EAC6C /* libdav1d.5.dylib */,
+				1978451326D7EC620079DD9C /* liblzma.5.dylib */,
 				192ED26F26C03004004EAC6C /* libmp3lame.0.dylib */,
 				192ED26826C03004004EAC6C /* libogg.0.dylib */,
 				192ED26D26C03004004EAC6C /* libopus.0.dylib */,

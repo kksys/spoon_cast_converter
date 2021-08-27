@@ -5,13 +5,16 @@ import 'dart:ffi';
 // Package imports:
 import 'package:ffi/ffi.dart';
 
+// Project imports:
+import 'package:spoon_cast_converter/repository/ffmpeg-response.dart';
+
 final DynamicLibrary _ffmpegLib = DynamicLibrary.process();
 
 abstract class FFmpegLib {
-  Future<Map<String, dynamic>> getFileInfo({
+  Future<FFmpegGetFileInfoResponseRepository> getFileInfo({
     required String filePath,
   });
-  Future<Map<String, dynamic>> convertFile({
+  Future<FFmpegConvertResponseRepository> convertFile({
     required String inputFilePath,
     required String outputFilePath,
     required ConvertingCallback callback,
@@ -47,21 +50,22 @@ class FFmpegLibImpl implements FFmpegLib {
         .asFunction();
   }
 
-  Future<Map<String, dynamic>> getFileInfo({required String filePath}) async {
+  Future<FFmpegGetFileInfoResponseRepository> getFileInfo({required String filePath}) async {
     final description = _getFileInfo(filePath.toNativeUtf8()).toDartString();
     Map<String, dynamic> json = jsonDecode(description);
-    var result = Map<String, dynamic>();
+    final repository = FFmpegGetFileInfoRepository.fromJson(json);
+    FFmpegGetFileInfoResponseRepository result;
 
-    if (json['status'] == 'SUCCESS') {
-      result = json['response'];
+    if (repository.status == 'SUCCESS') {
+      result = repository.response!;
     } else {
-      throw json['error'];
+      throw repository.error!;
     }
 
     return result;
   }
 
-  Future<Map<String, dynamic>> convertFile({
+  Future<FFmpegConvertResponseRepository> convertFile({
     required String inputFilePath,
     required String outputFilePath,
     required ConvertingCallback callback,
@@ -76,12 +80,13 @@ class FFmpegLibImpl implements FFmpegLib {
     ).toDartString();
     _callback = null;
     Map<String, dynamic> json = jsonDecode(description);
-    var result = Map<String, dynamic>();
+    final repository = FFmpegConvertRepository.fromJson(json);
+    FFmpegConvertResponseRepository result;
 
-    if (json['status'] == 'SUCCESS') {
-      result = json['response'];
+    if (repository.status == 'SUCCESS') {
+      result = repository.response!;
     } else {
-      throw json['error'];
+      throw repository.error!;
     }
 
     return result;

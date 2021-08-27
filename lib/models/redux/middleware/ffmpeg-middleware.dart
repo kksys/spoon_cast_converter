@@ -1,4 +1,5 @@
 // Dart imports:
+import 'dart:convert';
 import 'dart:isolate';
 
 // Package imports:
@@ -31,14 +32,14 @@ void Function(
       final description = await ffmpegLib.getFileInfo(filePath: action.filePath);
       store.dispatch(UpdateFileInfoAction(
         fileInfo: AudioFileInfo(
-          codec: description['codec'],
-          profile: description['profile'],
-          sampleRates: description['sample_rates'],
-          bitRates: description['bit_rates'],
-          channels: description['channels'],
+          codec: description.codec,
+          profile: description.profile,
+          sampleRates: description.sampleRates,
+          bitRates: description.bitRates,
+          channels: description.channels,
           duration: AudioFileDuration(
-            seconds: description['duration']['seconds'],
-            milliseconds: description['duration']['milliseconds'],
+            seconds: description.duration.seconds,
+            milliseconds: description.duration.milliseconds,
           ),
         ),
       ));
@@ -110,7 +111,7 @@ void _internalConvertFile(ConvertFileSpawnParams params) async {
     );
     result = {
       'status': 'SUCCESS',
-      'result': response,
+      'result': jsonEncode(response.toJson()),
     };
   } catch (e) {
     result = {

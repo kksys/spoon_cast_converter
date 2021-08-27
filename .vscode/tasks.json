@@ -20,6 +20,14 @@
             }
         },
         {
+            "label": "flutter: launch json serializer service",
+            "type": "shell",
+            "command": "flutter pub run build_runner watch",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            }
+        },
+        {
             "label": "flutter: release build",
             "type": "shell",
             "command": "flutter pub get && flutter build macos --release && ./build_scripts/codesigning.sh",

@@ -112,7 +112,7 @@ packages:
       name: file_selector_web
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.1+1"
+    version: "0.8.1+2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -375,13 +375,13 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.5"
+    version: "2.2.7"
   window_size:
     dependency: "direct main"
     description:
       path: "plugins/window_size"
       ref: HEAD
-      resolved-ref: "3da6d7b8011be38412c815c6a1832377b7d47a78"
+      resolved-ref: "1d9232e2c172992b74ba538851ffea26a0cb2640"
       url: "git://github.com/google/flutter-desktop-embedding.git"
     source: git
     version: "0.1.0"

@@ -71,7 +71,7 @@ class _AppLicenseDialogState extends State<AppLicenseDialog> {
           title: AppText(localizations.alertLicenseTitle),
           message: Container(
             width: double.infinity,
-            height: size.height * 0.9 - padding,
+            height: size.height * 0.85 - padding,
             child: SingleChildScrollView(
               child: Column(
                 children: licenses

@@ -14,6 +14,7 @@ import 'package:spoon_cast_converter/components/organisms/dialogs/file-conflict-
 import 'package:spoon_cast_converter/components/organisms/dialogs/finish-convert-sequence-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/license-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/unsupported-filetype-dialog.dart';
+import 'package:spoon_cast_converter/lib/titlebar-button-lib.dart';
 import 'package:spoon_cast_converter/models/redux/app-state.dart';
 
 class AppModalDialog extends StatefulWidget {
@@ -24,12 +25,15 @@ class AppModalDialog extends StatefulWidget {
 }
 
 class _AppModalDialogState extends State<StatefulWidget> {
+  final TitlebarButtonLib titlebarButtonLib = TitlebarButtonLibImpl();
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
       builder: (context, viewModel) {
         final Widget widget;
+        bool shouldDisableCloseButton = true;
 
         switch (viewModel.modalType) {
           case ModalType.MODAL_FILE_CONFLICT:
@@ -57,9 +61,15 @@ class _AppModalDialogState extends State<StatefulWidget> {
             widget = AppLicenseDialog();
             break;
           default:
+            shouldDisableCloseButton = false;
             widget = SizedBox.shrink();
             break;
         }
+
+        titlebarButtonLib.enableWindowButton(
+          buttonType: ButtonType.closable,
+          enabled: !shouldDisableCloseButton,
+        );
 
         return widget;
       },

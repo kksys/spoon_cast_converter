@@ -24,6 +24,5 @@ class AppDelegate: FlutterAppDelegate {
       name: "net.kk_systems.spoonCastConverter.menu",
       binaryMessenger: controller.engine.binaryMessenger
     )
-    return super.applicationDidFinishLaunching(notification)
   }
 }

@@ -31,7 +31,7 @@ class _TopPanelState extends State<TopPanel> {
 
     if (result == null) {
       return;
-    } else if (viewModel.inputFileNameList.contains(result.path)) {
+    } else if (viewModel.convertFileList.any((element) => element.inputFilePath == result.path)) {
       viewModel.updateModalInfo(const ModalInfo(modalType: ModalType.MODAL_FILE_CONFLICT));
     } else {
       viewModel.addInputFilePathList(result.path);
@@ -96,14 +96,14 @@ class _TopPanelState extends State<TopPanel> {
                   },
                   child: ListView.builder(
                     padding: EdgeInsets.zero,
-                    itemCount: viewModel.inputFileNameList.length,
+                    itemCount: viewModel.convertFileList.length,
                     itemBuilder: (_, index) {
                       return AppListItem(
                         onTap: () => _selectItem(viewModel, index),
                         selected: viewModel.selectedIndex == index,
                         build: () {
                           return AppText(
-                            viewModel.inputFileNameList[index],
+                            viewModel.convertFileList[index].inputFilePath,
                             overflow: TextOverflow.ellipsis,
                           );
                         },
@@ -155,7 +155,7 @@ class _TopPanelState extends State<TopPanel> {
                     width: double.infinity,
                     child: PushButton(
                       onPressed:
-                          viewModel.convertingIndex > -1 || viewModel.inputFileNameList.length == 0
+                          viewModel.convertingIndex > -1 || viewModel.convertFileList.length == 0
                               ? null
                               : () => _startConvert(viewModel),
                       buttonSize: ButtonSize.small,
@@ -173,7 +173,7 @@ class _TopPanelState extends State<TopPanel> {
 }
 
 class _ViewModel {
-  final List<String> inputFileNameList;
+  final List<ConvertItem> convertFileList;
   final int selectedIndex;
   final AudioFileInfo? fileInfo;
   final int convertingIndex;
@@ -186,7 +186,7 @@ class _ViewModel {
   final Function(ModalInfo) updateModalInfo;
 
   _ViewModel({
-    required this.inputFileNameList,
+    required this.convertFileList,
     required this.selectedIndex,
     required this.fileInfo,
     required this.convertingIndex,
@@ -201,7 +201,7 @@ class _ViewModel {
 
   static _ViewModel fromStore(Store<AppState> store) {
     return new _ViewModel(
-      inputFileNameList: store.state.inputFilePathList,
+      convertFileList: store.state.convertFileList,
       selectedIndex: store.state.selectedIndex,
       fileInfo: store.state.fileInfo,
       convertingIndex: store.state.convertingIndex,
@@ -215,8 +215,10 @@ class _ViewModel {
       },
       selectInputFilePathList: (int index) {
         store.dispatch(SelectInputFilePathListAction(index: index));
-        if (store.state.inputFilePathList.asMap().containsKey(index)) {
-          store.dispatch(OpenInputFileAction(filePath: store.state.inputFilePathList[index]));
+        if (store.state.convertFileList.asMap().containsKey(index)) {
+          store.dispatch(OpenInputFileAction(
+            filePath: store.state.convertFileList[index].inputFilePath,
+          ));
         } else {
           store.dispatch(UpdateFileInfoAction());
         }

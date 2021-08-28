@@ -15,6 +15,16 @@ class RemoveInputFilePathListAction {
   const RemoveInputFilePathListAction({required this.index});
 }
 
+class UpdateOutputFilePathAction {
+  final int index;
+  final String? outputFilePath;
+
+  const UpdateOutputFilePathAction({
+    required this.index,
+    this.outputFilePath,
+  });
+}
+
 class SelectInputFilePathListAction {
   final int index;
 
@@ -65,6 +75,14 @@ class StartConvertSequenceAction {
 
 class ContinueNextConvertSequenceAction {
   const ContinueNextConvertSequenceAction();
+}
+
+class RequestConvertAction {
+  final bool forceConvert;
+
+  const RequestConvertAction({
+    this.forceConvert = false,
+  });
 }
 
 class UpdateModalInfoAction {

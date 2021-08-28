@@ -97,29 +97,14 @@ class _HomePageState extends State<HomePage> {
 }
 
 class _ViewModel {
-  final List<String> inputFileNameList;
-  final int selectedIndex;
-  final AudioFileInfo? fileInfo;
-  final int convertingIndex;
-  final Rational convertingStatus;
   final Function() checkAvailableUpdateAtLaunch;
 
   _ViewModel({
-    required this.inputFileNameList,
-    required this.selectedIndex,
-    required this.fileInfo,
-    required this.convertingIndex,
-    required this.convertingStatus,
     required this.checkAvailableUpdateAtLaunch,
   });
 
   static _ViewModel fromStore(Store<AppState> store) {
     return new _ViewModel(
-      inputFileNameList: store.state.inputFilePathList,
-      selectedIndex: store.state.selectedIndex,
-      fileInfo: store.state.fileInfo,
-      convertingIndex: store.state.convertingIndex,
-      convertingStatus: store.state.convertingStatus,
       checkAvailableUpdateAtLaunch: () {
         store.dispatch(CheckExistAvailableUpdateAction(launchTime: true));
       },

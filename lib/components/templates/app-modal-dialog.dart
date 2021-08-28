@@ -6,6 +6,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 
 // Project imports:
+import 'package:spoon_cast_converter/components/organisms/dialogs/already-exist-destination-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/already-latest-version-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/available-update-dialog.dart';
 import 'package:spoon_cast_converter/components/organisms/dialogs/downloading-update-dialog.dart';
@@ -55,6 +56,9 @@ class _AppModalDialogState extends State<StatefulWidget> {
             break;
           case ModalType.MODAL_LICENSE:
             widget = AppLicenseDialog();
+            break;
+          case ModalType.MODAL_ALREADY_EXIST_DESTINATION:
+            widget = AppAlreadyExistDestinationDialog();
             break;
           default:
             widget = SizedBox.shrink();

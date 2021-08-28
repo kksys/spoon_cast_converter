@@ -31,6 +31,11 @@
 
   "alertLicenseTitle": "サードパーティーソフトウェアライセンス",
 
+  "alertAlreadyExistDestinationTitle": "既に書き出し先にファイルが存在します",
+  "alertAlreadyExistDestinationMessage": "既に書き出し先にファイルが存在します。\n上書きしてもよしければ\"上書き\"ボタンを, \n他の書き出し先を選択するには\"他の書き出し先を選択...\"ボタンを押してください。",
+  "appAlreadyExistDestinationOverwriteButton": "上書き",
+  "appAlreadyExistDestinationSelectOtherDestinationButton": "他の書き出し先を選択...",
+
   "appSelectButton": "選択...",
   "appDeleteButton": "削除",
   "appStartToConvertButton": "変換開始",

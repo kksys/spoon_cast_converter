@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:convert';
+import 'dart:io';
 import 'dart:isolate';
 
 // Package imports:
@@ -20,6 +21,7 @@ final List<Middleware<AppState>> ffmpegMiddleware = [
   TypedMiddleware<AppState, ConvertFileAction>(_convertFile(ffmpegLib)),
   TypedMiddleware<AppState, StartConvertSequenceAction>(_startConvertSequence()),
   TypedMiddleware<AppState, ContinueNextConvertSequenceAction>(_continueNextConvertSequence()),
+  TypedMiddleware<AppState, RequestConvertAction>(_requestConvert()),
 ];
 
 void Function(
@@ -186,7 +188,7 @@ void Function(
     print('_continueNextConvertSequence');
     int nextConvertIndex = store.state.convertingIndex + 1;
     nextConvertIndex =
-        nextConvertIndex < store.state.inputFilePathList.length ? nextConvertIndex : -1;
+        nextConvertIndex < store.state.convertFileList.length ? nextConvertIndex : -1;
 
     store.dispatch(
       UpdateConvertingStatusAction(convertingStatus: Rational()),
@@ -202,16 +204,36 @@ void Function(
       return;
     }
 
-    final String inputFilePath = store.state.inputFilePathList[nextConvertIndex];
+    store.dispatch(RequestConvertAction());
+  };
+}
+
+void Function(
+  Store<AppState> store,
+  RequestConvertAction action,
+  NextDispatcher next,
+) _requestConvert() {
+  return (store, action, next) async {
+    print('_requestConvert');
+
+    final int nextConvertIndex = store.state.convertingIndex;
+    final String inputFilePath = store.state.convertFileList[nextConvertIndex].inputFilePath;
     final inputExt = extension(inputFilePath);
-    final String outputFilePath = inputFilePath.replaceFirst(RegExp('$inputExt\$'), '.m4a');
+    final String outputFilePath = store.state.convertFileList[nextConvertIndex].outputFilePath ??
+        inputFilePath.replaceFirst(RegExp('$inputExt\$'), '.m4a');
 
     print('inputFilePath: $inputFilePath');
     print('outputFilePath: $outputFilePath');
 
-    store.dispatch(ConvertFileAction(
-      inputFilePath: inputFilePath,
-      outputFilePath: outputFilePath,
-    ));
+    if (!action.forceConvert && File(outputFilePath).existsSync()) {
+      store.dispatch(UpdateModalInfoAction(
+        modalInfo: const ModalInfo(modalType: ModalType.MODAL_ALREADY_EXIST_DESTINATION),
+      ));
+    } else {
+      store.dispatch(ConvertFileAction(
+        inputFilePath: inputFilePath,
+        outputFilePath: outputFilePath,
+      ));
+    }
   };
 }

@@ -65,6 +65,7 @@ class _AppAlreadyExistDestinationDialogState extends State<AppAlreadyExistDestin
                 viewModel.updateOutputFilePath(manualSelectedOutputPath);
                 viewModel.continueConvertFile();
               } else {
+                await Future.delayed(Duration(microseconds: 500));
                 viewModel.continueNextConvertSequence();
               }
             },

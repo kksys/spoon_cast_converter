@@ -14,17 +14,17 @@
 
   "alertAvailableVersionTitle": "新しいバージョンが利用可能です",
   "alertAvailableVersionMessage": "新しいバージョンが利用可能です。\n\n現在のバージョン: {currentVersion}\n利用可能なバージョン: {availableVersion}\n\nダウンロードしますか？",
-  "alertAvailableVersionDownloadButton": "ダウンロード...",
+  "alertAvailableVersionDownloadButton": "ダウンロード…",
   "alertAvailableVersionAfterwardsButton": "あとで",
 
   "alertAlreadyLatestVersionTitle": "アップデートの必要なし",
   "alertAlreadyLatestVersionMessage": "既に最新のアップデートが適用されています。",
 
-  "alertDownloadingUpdaterTitleWithDownloading": "ダウンロード中...",
-  "alertDownloadingUpdaterMessageWithDownloading": "ダウンロードしています...\n新しいバージョンのパッケージのダウンロードが完了するまでしばらくお待ちください...",
+  "alertDownloadingUpdaterTitleWithDownloading": "ダウンロード中…",
+  "alertDownloadingUpdaterMessageWithDownloading": "ダウンロードしています…\n新しいバージョンのパッケージのダウンロードが完了するまでしばらくお待ちください…",
   "alertDownloadingUpdaterTitleWithDownloaded": "ダウンロード完了",
-  "alertDownloadingUpdaterMessageWithDownloaded": "ダウンロードが完了しました。\n更新するために「終了...」ボタンを押してください。",
-  "alertDownloadingUpdaterExitButton": "終了...",
+  "alertDownloadingUpdaterMessageWithDownloaded": "ダウンロードが完了しました。\n更新するために「終了…」ボタンを押してください。",
+  "alertDownloadingUpdaterExitButton": "終了…",
 
   "alertFailedToUpdateTitle": "更新失敗",
   "alertFailedToUpdateMessage": "更新に失敗しました。\nネットワークの状態を確認し、再度実行してください。\nそれでも解決できない場合は、ベンダーにお問い合わせください。",
@@ -32,11 +32,11 @@
   "alertLicenseTitle": "サードパーティーソフトウェアライセンス",
 
   "alertAlreadyExistDestinationTitle": "既に書き出し先にファイルが存在します",
-  "alertAlreadyExistDestinationMessage": "既に書き出し先にファイルが存在します。\n上書きしてもよしければ\"上書き\"ボタンを, \n他の書き出し先を選択するには\"他の書き出し先を選択...\"ボタンを押してください。",
+  "alertAlreadyExistDestinationMessage": "既に書き出し先にファイルが存在します。\n上書きしてもよしければ\"上書き\"ボタンを, \n他の書き出し先を選択するには\"他の書き出し先を選択…\"ボタンを押してください。",
   "appAlreadyExistDestinationOverwriteButton": "上書き",
-  "appAlreadyExistDestinationSelectOtherDestinationButton": "他の書き出し先を選択...",
+  "appAlreadyExistDestinationSelectOtherDestinationButton": "他の書き出し先を選択…",
 
-  "appSelectButton": "選択...",
+  "appSelectButton": "選択…",
   "appDeleteButton": "削除",
   "appStartToConvertButton": "変換開始",
 

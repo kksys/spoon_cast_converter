@@ -109,7 +109,7 @@ class _BottomPanelState extends State<BottomPanel> {
 
   double calculateTotalProgress(_ViewModel viewModel) {
     double result = 0;
-    final numberOfTask = viewModel.inputFileNameList.length;
+    final numberOfTask = viewModel.convertFileList.length;
     final currentTaskIndex = viewModel.convertingIndex > 0 ? viewModel.convertingIndex : 0;
     final current = viewModel.convertingStatus.current;
     final duration = viewModel.convertingStatus.duration;
@@ -194,7 +194,7 @@ class _BottomPanelState extends State<BottomPanel> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         AppText(
-                          '${viewModel.convertingIndex + 1} / ${viewModel.inputFileNameList.length}',
+                          '${viewModel.convertingIndex + 1} / ${viewModel.convertFileList.length}',
                         ),
                       ],
                     ),
@@ -210,15 +210,13 @@ class _BottomPanelState extends State<BottomPanel> {
 }
 
 class _ViewModel {
-  final List<String> inputFileNameList;
-  final int selectedIndex;
+  final List<ConvertItem> convertFileList;
   final AudioFileInfo? fileInfo;
   final int convertingIndex;
   final Rational convertingStatus;
 
   _ViewModel({
-    required this.inputFileNameList,
-    required this.selectedIndex,
+    required this.convertFileList,
     required this.fileInfo,
     required this.convertingIndex,
     required this.convertingStatus,
@@ -226,8 +224,7 @@ class _ViewModel {
 
   static _ViewModel fromStore(Store<AppState> store) {
     return new _ViewModel(
-      inputFileNameList: store.state.inputFilePathList,
-      selectedIndex: store.state.selectedIndex,
+      convertFileList: store.state.convertFileList,
       fileInfo: store.state.fileInfo,
       convertingIndex: store.state.convertingIndex,
       convertingStatus: store.state.convertingStatus,

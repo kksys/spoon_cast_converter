@@ -3,28 +3,36 @@ import 'package:spoon_cast_converter/models/redux/app-state.dart';
 
 export 'package:spoon_cast_converter/models/redux/action/version-check-action.dart';
 
-class AddInputFilePathListAction {
-  final String filepath;
+class AddConvertItemAction {
+  final ConvertItem convertItem;
 
-  const AddInputFilePathListAction({required this.filepath});
+  const AddConvertItemAction({required this.convertItem});
 }
 
-class RemoveInputFilePathListAction {
+class RemoveConvertItemAction {
+  final String id;
+
+  const RemoveConvertItemAction({required this.id});
+}
+
+class UpdateConvertItemAction {
+  final ConvertItem convertItem;
+
+  const UpdateConvertItemAction({
+    required this.convertItem,
+  });
+}
+
+class SelectConvertFileListAction {
   final int index;
 
-  const RemoveInputFilePathListAction({required this.index});
+  const SelectConvertFileListAction({required this.index});
 }
 
-class SelectInputFilePathListAction {
-  final int index;
-
-  const SelectInputFilePathListAction({required this.index});
-}
-
-class OpenInputFileAction {
+class GetFileInfoAction {
   final String filePath;
 
-  const OpenInputFileAction({required this.filePath});
+  const GetFileInfoAction({required this.filePath});
 }
 
 class ConvertFileAction {
@@ -67,6 +75,14 @@ class ContinueNextConvertSequenceAction {
   const ContinueNextConvertSequenceAction();
 }
 
+class RequestConvertAction {
+  final bool forceConvert;
+
+  const RequestConvertAction({
+    this.forceConvert = false,
+  });
+}
+
 class UpdateModalInfoAction {
   final ModalInfo modalInfo;
 
@@ -76,9 +92,9 @@ class UpdateModalInfoAction {
 }
 
 class CheckAndAddInputFilePathListAction {
-  final String filepath;
+  final ConvertItem convertItem;
 
   const CheckAndAddInputFilePathListAction({
-    required this.filepath,
+    required this.convertItem,
   });
 }

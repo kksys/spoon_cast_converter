@@ -56,9 +56,9 @@
     }
   },
 
-  "alertAvailableVersionDownloadButton": "Download...",
+  "alertAvailableVersionDownloadButton": "Download…",
   "@alertAvailableVersionDownloadButton": {
-    "description": "Download..."
+    "description": "Download…"
   },
 
   "alertAvailableVersionAfterwardsButton": "Afterwards",
@@ -76,14 +76,14 @@
     "description": "It is already installed the latest version. :)"
   },
 
-  "alertDownloadingUpdaterTitleWithDownloading": "Downloading now...",
+  "alertDownloadingUpdaterTitleWithDownloading": "Downloading now…",
   "@alertDownloadingUpdaterTitleWithDownloading": {
-    "description": "Downloading now..."
+    "description": "Downloading now…"
   },
 
-  "alertDownloadingUpdaterMessageWithDownloading": "Downloading now... \nPlease wait few minutes for downloading new version package.",
+  "alertDownloadingUpdaterMessageWithDownloading": "Downloading now… \nPlease wait few minutes for downloading new version package.",
   "@alertDownloadingUpdaterMessageWithDownloading": {
-    "description": "Downloading now... \\nPlease wait few minutes for downloading new version package."
+    "description": "Downloading now… \\nPlease wait few minutes for downloading new version package."
   },
 
   "alertDownloadingUpdaterTitleWithDownloaded": "Download is completed",
@@ -91,14 +91,14 @@
     "description": "Download is completed"
   },
 
-  "alertDownloadingUpdaterMessageWithDownloaded": "Download is completed. \nPlease press \"Exit...\" button to update.",
+  "alertDownloadingUpdaterMessageWithDownloaded": "Download is completed. \nPlease press \"Exit…\" button to update.",
   "@alertDownloadingUpdaterMessageWithDownloaded": {
-    "description": "Download is completed. \\nPlease press \\\"Exit...\\\" button to update."
+    "description": "Download is completed. \\nPlease press \\\"Exit…\\\" button to update."
   },
 
-  "alertDownloadingUpdaterExitButton": "Exit...",
+  "alertDownloadingUpdaterExitButton": "Exit…",
   "@alertDownloadingUpdaterExitButton": {
-    "description": "Exit..."
+    "description": "Exit…"
   },
 
   "alertFailedToUpdateTitle": "Failed to update",
@@ -116,9 +116,29 @@
     "description": "Third-party software licenses"
   },
 
-  "appSelectButton": "Select...",
+  "alertAlreadyExistDestinationTitle": "Destination already exists",
+  "@alertAlreadyExistDestinationTitle": {
+    "description": "Destination already exists"
+  },
+
+  "alertAlreadyExistDestinationMessage": "Destination already exists. \nPlease press \"Overwrite\" button if you accept to overwrite it, \notherwise press \"Select the other destination…\" button to select other destination. :)",
+  "@alertAlreadyExistDestinationMessage": {
+    "description": "Destination already exists. \\nPlease press \\\"Overwrite\\\" button if you accept to overwrite it, \\notherwise press \\\"Select the other destination…\\\" button to select other destination. :)"
+  },
+
+  "appAlreadyExistDestinationOverwriteButton": "Overwrite",
+  "@appAlreadyExistDestinationOverwriteButton": {
+    "description": "Overwrite"
+  },
+
+  "appAlreadyExistDestinationSelectOtherDestinationButton": "Select the other destination…",
+  "@appAlreadyExistDestinationSelectOtherDestinationButton": {
+    "description": "Select the other destination…"
+  },
+
+  "appSelectButton": "Select…",
   "@appSelectButton": {
-    "description": "Select..."
+    "description": "Select…"
   },
 
   "appDeleteButton": "Delete",

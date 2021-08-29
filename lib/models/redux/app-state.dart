@@ -112,6 +112,7 @@ enum ModalType {
   MODAL_DOWNLOADING_UPDATE,
   MODAL_FAILED_TO_UPDATE,
   MODAL_LICENSE,
+  MODAL_ALREADY_EXIST_DESTINATION,
 }
 
 class ModalInfo {
@@ -139,8 +140,37 @@ class ModalInfo {
 }
 
 @immutable
+class ConvertItem {
+  final String? id;
+  final String inputFilePath;
+  final String? outputFilePath;
+
+  const ConvertItem({
+    this.id,
+    required this.inputFilePath,
+    this.outputFilePath,
+  });
+
+  Map toMap() {
+    return {
+      'id': this.id,
+      'inputFilePath': this.inputFilePath,
+      'outputFilePath': this.outputFilePath,
+    };
+  }
+
+  static ConvertItem fromMap(Map obj) {
+    return ConvertItem(
+      id: obj['id'],
+      inputFilePath: obj['inputFilePath'],
+      outputFilePath: obj['outputFilePath'],
+    );
+  }
+}
+
+@immutable
 class AppState {
-  final List<String> inputFilePathList;
+  final List<ConvertItem> convertFileList;
   final int selectedIndex;
   final AudioFileInfo? fileInfo;
   final int convertingIndex;
@@ -148,7 +178,7 @@ class AppState {
   final ModalInfo modalInfo;
 
   const AppState({
-    this.inputFilePathList = const [],
+    this.convertFileList = const [],
     this.selectedIndex = -1,
     this.fileInfo,
     this.convertingIndex = -1,
@@ -158,7 +188,7 @@ class AppState {
 
   Map toMap() {
     return {
-      'inputFilePathList': this.inputFilePathList,
+      'convertFileList': this.convertFileList.map((e) => e.toMap()).toList(),
       'selectedIndex': this.selectedIndex,
       'fileInfo': this.fileInfo?.toMap(),
       'convertingIndex': this.convertingIndex,
@@ -169,7 +199,8 @@ class AppState {
 
   static AppState fromMap(Map obj) {
     return AppState(
-      inputFilePathList: obj['inputFilePathList'],
+      convertFileList:
+          (obj['convertFileList'] as List<dynamic>).map((e) => ConvertItem.fromMap(e)).toList(),
       selectedIndex: obj['selectedIndex'],
       fileInfo: obj['fileInfo'] != null ? AudioFileInfo.fromMap(obj['fileInfo']) : null,
       convertingIndex: obj['convertingIndex'],

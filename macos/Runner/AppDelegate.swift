@@ -70,6 +70,5 @@ class AppDelegate: FlutterAppDelegate {
       binaryMessenger: controller.engine.binaryMessenger
     )
     TITLEBAR_BUTTON_CHANNEL.setMethodCallHandler(methodCallback)
-    return super.applicationDidFinishLaunching(notification)
   }
 }

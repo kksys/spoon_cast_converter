@@ -1,45 +1,63 @@
 // Package imports:
 import 'package:redux/redux.dart';
+import 'package:uuid/uuid.dart';
 
 // Project imports:
 import 'package:spoon_cast_converter/models/redux/action/app-actions.dart';
 import 'package:spoon_cast_converter/models/redux/app-state.dart';
 
 final filepathReducer = combineReducers<AppState>([
-  new TypedReducer<AppState, AddInputFilePathListAction>(_addInputFilePathListReducer),
-  new TypedReducer<AppState, RemoveInputFilePathListAction>(_removeInputFilePathListReducer),
-  new TypedReducer<AppState, UpdateOutputFilePathAction>(_updateOutputFilePathReducer),
-  new TypedReducer<AppState, SelectInputFilePathListAction>(_selectInputFilePathListReducer),
+  new TypedReducer<AppState, AddConvertItemAction>(_addConvertItemReducer),
+  new TypedReducer<AppState, RemoveConvertItemAction>(_removeConvertItemReducer),
+  new TypedReducer<AppState, UpdateConvertItemAction>(_updateConvertItemReducer),
+  new TypedReducer<AppState, SelectConvertFileListAction>(_selectConvertFileListReducer),
   new TypedReducer<AppState, UpdateFileInfoAction>(_updateFileInfoReducer),
   new TypedReducer<AppState, UpdateConvertingIndexAction>(_updateConvertingIndexReducer),
   new TypedReducer<AppState, UpdateConvertingStatusAction>(_updateConvertingStatusReducer),
   new TypedReducer<AppState, UpdateModalInfoAction>(_updateModalInfo),
 ]);
 
-AppState _addInputFilePathListReducer(
+AppState _addConvertItemReducer(
   AppState state,
-  AddInputFilePathListAction action,
+  AddConvertItemAction action,
 ) {
-  List<ConvertItem> convertFileList = [
-    ...state.convertFileList,
-    ConvertItem(inputFilePath: action.filepath)
-  ];
-  return AppState.fromMap({
-    ...state.toMap(),
-    'convertFileList': convertFileList.map((e) => e.toMap()).toList(),
-  });
+  final uuid = Uuid();
+  String? newId = action.convertItem.id;
+  AppState newState = state;
+
+  if (newId == null) {
+    final idList = state.convertFileList.map((e) => e.id);
+
+    do {
+      newId = uuid.v4();
+    } while (idList.contains(newId));
+
+    newState = AppState.fromMap({
+      ...state.toMap(),
+      'convertFileList': [
+        ...state.convertFileList,
+        ConvertItem(
+          id: newId,
+          inputFilePath: action.convertItem.inputFilePath,
+          outputFilePath: action.convertItem.outputFilePath,
+        ),
+      ].map((e) => e.toMap()).toList(),
+    });
+  }
+
+  return newState;
 }
 
-AppState _removeInputFilePathListReducer(
+AppState _removeConvertItemReducer(
   AppState state,
-  RemoveInputFilePathListAction action,
+  RemoveConvertItemAction action,
 ) {
   int selectedIndex = state.selectedIndex;
   List<ConvertItem> convertFileList = [...state.convertFileList];
   AudioFileInfo? fileInfo = state.fileInfo;
 
-  if (convertFileList.asMap().containsKey(action.index)) {
-    convertFileList.removeAt(action.index);
+  if (convertFileList.map((e) => e.id).contains(action.id)) {
+    convertFileList = convertFileList.where((e) => e.id != action.id).toList();
     selectedIndex = -1;
     fileInfo = null;
   }
@@ -52,18 +70,16 @@ AppState _removeInputFilePathListReducer(
   });
 }
 
-AppState _updateOutputFilePathReducer(
+AppState _updateConvertItemReducer(
   AppState state,
-  UpdateOutputFilePathAction action,
+  UpdateConvertItemAction action,
 ) {
   List<ConvertItem> convertFileList = [...state.convertFileList];
 
-  if (convertFileList.asMap().containsKey(action.index)) {
-    final ConvertItem previousItem = convertFileList[action.index];
-    convertFileList[action.index] = ConvertItem(
-      inputFilePath: previousItem.inputFilePath,
-      outputFilePath: action.outputFilePath,
-    );
+  if (convertFileList.map((e) => e.id).contains(action.convertItem.id) &&
+      action.convertItem.id != null) {
+    final index = convertFileList.indexWhere((e) => e.id == action.convertItem.id);
+    convertFileList[index] = action.convertItem;
   }
 
   return AppState.fromMap({
@@ -72,9 +88,9 @@ AppState _updateOutputFilePathReducer(
   });
 }
 
-AppState _selectInputFilePathListReducer(
+AppState _selectConvertFileListReducer(
   AppState state,
-  SelectInputFilePathListAction action,
+  SelectConvertFileListAction action,
 ) {
   return AppState.fromMap({
     ...state.toMap(),

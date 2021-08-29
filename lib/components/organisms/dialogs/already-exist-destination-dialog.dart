@@ -99,9 +99,13 @@ class _ViewModel {
         store.dispatch(UpdateModalInfoAction(modalInfo: modalInfo));
       },
       updateOutputFilePath: (String outputFilePath) {
-        store.dispatch(UpdateOutputFilePathAction(
-          index: store.state.convertingIndex,
-          outputFilePath: outputFilePath,
+        final currentItem = store.state.convertFileList[store.state.convertingIndex];
+        store.dispatch(UpdateConvertItemAction(
+          convertItem: ConvertItem(
+            id: currentItem.id,
+            inputFilePath: currentItem.inputFilePath,
+            outputFilePath: outputFilePath,
+          ),
         ));
       },
       continueConvertFile: () {

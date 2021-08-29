@@ -61,9 +61,9 @@ void Function(
 ) _checkAndAddInputFileListPath(FFmpegLib ffmpegLib) {
   return (store, action, next) async {
     try {
-      await ffmpegLib.getFileInfo(filePath: action.filepath);
-      store.dispatch(AddInputFilePathListAction(
-        filepath: action.filepath,
+      await ffmpegLib.getFileInfo(filePath: action.convertItem.inputFilePath);
+      store.dispatch(AddConvertItemAction(
+        convertItem: action.convertItem,
       ));
     } catch (e) {
       store.dispatch(UpdateModalInfoAction(

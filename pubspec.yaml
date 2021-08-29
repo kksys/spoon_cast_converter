@@ -42,6 +42,7 @@ dependencies:
   path_provider: ^2.0.2
   sticky_headers: ^0.2.0
   json_annotation: ^4.0.1
+  uuid: ^3.0.4
 
   window_size:
     git:

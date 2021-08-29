@@ -141,16 +141,19 @@ class ModalInfo {
 
 @immutable
 class ConvertItem {
+  final String? id;
   final String inputFilePath;
   final String? outputFilePath;
 
   const ConvertItem({
+    this.id,
     required this.inputFilePath,
     this.outputFilePath,
   });
 
   Map toMap() {
     return {
+      'id': this.id,
       'inputFilePath': this.inputFilePath,
       'outputFilePath': this.outputFilePath,
     };
@@ -158,6 +161,7 @@ class ConvertItem {
 
   static ConvertItem fromMap(Map obj) {
     return ConvertItem(
+      id: obj['id'],
       inputFilePath: obj['inputFilePath'],
       outputFilePath: obj['outputFilePath'],
     );

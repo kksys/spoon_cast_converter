@@ -7,10 +7,6 @@ import 'package:spoon_cast_converter/models/redux/reducer/filepath-reducer.dart'
 
 AppState appReducer(AppState state, action) {
   return combineReducers<AppState>([
-    // shiftModeReducer,
-    // alphaModeReducer,
-    // hypModeReducer,
-    // answerReducer,
     filepathReducer,
   ])(state, action);
 }

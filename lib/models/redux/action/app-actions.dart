@@ -3,32 +3,30 @@ import 'package:spoon_cast_converter/models/redux/app-state.dart';
 
 export 'package:spoon_cast_converter/models/redux/action/version-check-action.dart';
 
-class AddInputFilePathListAction {
-  final String filepath;
+class AddConvertItemAction {
+  final ConvertItem convertItem;
 
-  const AddInputFilePathListAction({required this.filepath});
+  const AddConvertItemAction({required this.convertItem});
 }
 
-class RemoveInputFilePathListAction {
-  final int index;
+class RemoveConvertItemAction {
+  final String id;
 
-  const RemoveInputFilePathListAction({required this.index});
+  const RemoveConvertItemAction({required this.id});
 }
 
-class UpdateOutputFilePathAction {
-  final int index;
-  final String? outputFilePath;
+class UpdateConvertItemAction {
+  final ConvertItem convertItem;
 
-  const UpdateOutputFilePathAction({
-    required this.index,
-    this.outputFilePath,
+  const UpdateConvertItemAction({
+    required this.convertItem,
   });
 }
 
-class SelectInputFilePathListAction {
+class SelectConvertFileListAction {
   final int index;
 
-  const SelectInputFilePathListAction({required this.index});
+  const SelectConvertFileListAction({required this.index});
 }
 
 class GetFileInfoAction {
@@ -94,9 +92,9 @@ class UpdateModalInfoAction {
 }
 
 class CheckAndAddInputFilePathListAction {
-  final String filepath;
+  final ConvertItem convertItem;
 
   const CheckAndAddInputFilePathListAction({
-    required this.filepath,
+    required this.convertItem,
   });
 }

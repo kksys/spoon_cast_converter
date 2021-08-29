@@ -32,14 +32,26 @@ class _TopPanelState extends State<TopPanel> {
     if (result == null) {
       return;
     } else if (viewModel.convertFileList.any((element) => element.inputFilePath == result.path)) {
-      viewModel.updateModalInfo(const ModalInfo(modalType: ModalType.MODAL_FILE_CONFLICT));
+      viewModel.updateModalInfo(
+        const ModalInfo(
+          modalType: ModalType.MODAL_FILE_CONFLICT,
+        ),
+      );
     } else {
-      viewModel.addInputFilePathList(result.path);
+      viewModel.addInputFilePathList(
+        ConvertItem(
+          inputFilePath: result.path,
+        ),
+      );
     }
   }
 
   void _deleteFile(_ViewModel viewModel) {
-    viewModel.removeInputFilePathList(viewModel.selectedIndex);
+    final id = viewModel.convertFileList[viewModel.selectedIndex].id;
+
+    if (id != null) {
+      viewModel.removeInputFilePathList(id);
+    }
   }
 
   void _startConvert(_ViewModel viewModel) {
@@ -179,8 +191,8 @@ class _ViewModel {
   final int convertingIndex;
   final Rational convertingStatus;
   final ModalInfo modalInfo;
-  final Function(String) addInputFilePathList;
-  final Function(int) removeInputFilePathList;
+  final Function(ConvertItem) addInputFilePathList;
+  final Function(String) removeInputFilePathList;
   final Function(int) selectInputFilePathList;
   final Function() startConvertFileSequence;
   final Function(ModalInfo) updateModalInfo;
@@ -207,14 +219,14 @@ class _ViewModel {
       convertingIndex: store.state.convertingIndex,
       convertingStatus: store.state.convertingStatus,
       modalInfo: store.state.modalInfo,
-      addInputFilePathList: (String filepath) {
-        store.dispatch(CheckAndAddInputFilePathListAction(filepath: filepath));
+      addInputFilePathList: (ConvertItem convertItem) {
+        store.dispatch(CheckAndAddInputFilePathListAction(convertItem: convertItem));
       },
-      removeInputFilePathList: (int index) {
-        store.dispatch(RemoveInputFilePathListAction(index: index));
+      removeInputFilePathList: (String id) {
+        store.dispatch(RemoveConvertItemAction(id: id));
       },
       selectInputFilePathList: (int index) {
-        store.dispatch(SelectInputFilePathListAction(index: index));
+        store.dispatch(SelectConvertFileListAction(index: index));
         if (store.state.convertFileList.asMap().containsKey(index)) {
           store.dispatch(GetFileInfoAction(
             filePath: store.state.convertFileList[index].inputFilePath,

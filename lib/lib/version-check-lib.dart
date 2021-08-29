@@ -141,7 +141,7 @@ class VersionCheckLibImpl implements VersionCheckLib {
       return null;
     }
 
-    final List<Map<String, dynamic>> assets = this.fetchedLatestInfo['assets'];
+    final assets = (this.fetchedLatestInfo['assets'] as List<dynamic>).cast<Map<String, dynamic>>();
     final asset = assets.firstWhere((element) => RegExp(r'darwin.dmg$').hasMatch(element['name']));
     final packageName = asset['name'];
 
@@ -160,7 +160,7 @@ class VersionCheckLibImpl implements VersionCheckLib {
       return;
     }
 
-    final List<Map<String, dynamic>> assets = this.fetchedLatestInfo['assets'];
+    final assets = (this.fetchedLatestInfo['assets'] as List<dynamic>).cast<Map<String, dynamic>>();
     final asset = assets.firstWhere((element) => RegExp(r'darwin.dmg$').hasMatch(element['name']));
     final packageUri = asset['browser_download_url'];
 

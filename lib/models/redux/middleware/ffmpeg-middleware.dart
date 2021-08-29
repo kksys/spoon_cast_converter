@@ -15,7 +15,7 @@ import 'package:spoon_cast_converter/models/redux/app-state.dart';
 final FFmpegLib ffmpegLib = FFmpegLibImpl();
 
 final List<Middleware<AppState>> ffmpegMiddleware = [
-  TypedMiddleware<AppState, OpenInputFileAction>(_openInputFile(ffmpegLib)),
+  TypedMiddleware<AppState, GetFileInfoAction>(_getFileInfo(ffmpegLib)),
   TypedMiddleware<AppState, CheckAndAddInputFilePathListAction>(
       _checkAndAddInputFileListPath(ffmpegLib)),
   TypedMiddleware<AppState, ConvertFileAction>(_convertFile(ffmpegLib)),
@@ -26,9 +26,9 @@ final List<Middleware<AppState>> ffmpegMiddleware = [
 
 void Function(
   Store<AppState> store,
-  OpenInputFileAction action,
+  GetFileInfoAction action,
   NextDispatcher next,
-) _openInputFile(FFmpegLib ffmpegLib) {
+) _getFileInfo(FFmpegLib ffmpegLib) {
   return (store, action, next) async {
     try {
       final description = await ffmpegLib.getFileInfo(filePath: action.filePath);

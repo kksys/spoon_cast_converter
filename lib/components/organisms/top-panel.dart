@@ -216,7 +216,7 @@ class _ViewModel {
       selectInputFilePathList: (int index) {
         store.dispatch(SelectInputFilePathListAction(index: index));
         if (store.state.convertFileList.asMap().containsKey(index)) {
-          store.dispatch(OpenInputFileAction(
+          store.dispatch(GetFileInfoAction(
             filePath: store.state.convertFileList[index].inputFilePath,
           ));
         } else {

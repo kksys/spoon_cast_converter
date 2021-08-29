@@ -31,10 +31,10 @@ class SelectInputFilePathListAction {
   const SelectInputFilePathListAction({required this.index});
 }
 
-class OpenInputFileAction {
+class GetFileInfoAction {
   final String filePath;
 
-  const OpenInputFileAction({required this.filePath});
+  const GetFileInfoAction({required this.filePath});
 }
 
 class ConvertFileAction {

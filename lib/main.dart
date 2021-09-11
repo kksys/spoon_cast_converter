@@ -14,6 +14,8 @@ import 'package:window_size/window_size.dart';
 
 // Project imports:
 import 'package:spoon_cast_converter/components/pages/home-page.dart';
+import 'package:spoon_cast_converter/components/pages/test-page.dart';
+import 'package:spoon_cast_converter/conf.dart';
 import 'package:spoon_cast_converter/models/redux/action/app-actions.dart';
 import 'package:spoon_cast_converter/models/redux/app-state.dart';
 import 'package:spoon_cast_converter/models/redux/middleware/app-middleware.dart';
@@ -100,7 +102,7 @@ class _MyAppState extends State<MyApp> {
             converter: (store) => true,
             builder: (context, _) => Navigator(
               onGenerateRoute: (settings) => CupertinoPageRoute(
-                builder: (context) => HomePage(),
+                builder: (context) => UI_TEST_MODE ? TestPage() : HomePage(),
               ),
             ),
           );

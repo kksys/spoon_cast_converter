@@ -1,9 +1,11 @@
 // Dart imports:
+import 'dart:io';
 import 'dart:math';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:macos_ui/macos_ui.dart';
@@ -71,14 +73,23 @@ class _AppTableRowState extends State<AppTableColumn> {
   }
 }
 
+enum AppTableSelectionType {
+  SINGLE_ROW_SELECTION,
+  MULTI_ROW_SELECTION,
+}
+
 class AppTable extends StatefulWidget {
   final List<AppTableColumn> columns;
   final List<AppTableRow> rows;
+  final AppTableSelectionType selectionType;
+  final Function(List<int>)? onSelected;
 
   const AppTable({
     Key? key,
     required this.columns,
     required this.rows,
+    this.selectionType = AppTableSelectionType.SINGLE_ROW_SELECTION,
+    this.onSelected,
   }) : super(key: key);
 
   _AppTable createState() => _AppTable();
@@ -92,6 +103,7 @@ class _AppTable extends State<AppTable> {
   late List<double> _widthForViewIncludeLast;
   late List<double> _widthForView;
   late List<double> _widthForCalculate;
+  FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -187,11 +199,39 @@ class _AppTable extends State<AppTable> {
   }
 
   List<int> _selectedRow = [];
+  bool _multiSelectionKeyPressed = false;
 
   void _onCellClick(int row) {
     setState(() {
-      _selectedRow = [row];
+      if (this.widget.selectionType == AppTableSelectionType.SINGLE_ROW_SELECTION ||
+          (this.widget.selectionType == AppTableSelectionType.MULTI_ROW_SELECTION &&
+              !_multiSelectionKeyPressed)) {
+        _selectedRow = [row];
+      } else if (_selectedRow.contains(row)) {
+        _selectedRow = _selectedRow.where((element) => element != row).toList();
+      } else {
+        _selectedRow = [..._selectedRow, row]..sort((a, b) => a.compareTo(b));
+      }
     });
+
+    this.widget.onSelected?.call(this._selectedRow);
+  }
+
+  void _onKey(RawKeyEvent event) {
+    final multipleSelectionKeyList = (Platform.isMacOS)
+        ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.metaLeft, LogicalKeyboardKey.metaRight]
+        : [
+            LogicalKeyboardKey.control,
+            LogicalKeyboardKey.controlLeft,
+            LogicalKeyboardKey.controlRight
+          ];
+
+    if (!multipleSelectionKeyList.any((element) => element == event.logicalKey)) {
+      return;
+    }
+
+    _multiSelectionKeyPressed =
+        multipleSelectionKeyList.any((element) => event.isKeyPressed(element));
   }
 
   @override
@@ -203,7 +243,12 @@ class _AppTable extends State<AppTable> {
         padding: EdgeInsets.all(-3),
         viewPadding: EdgeInsets.all(-3),
       ),
-      child: buildContainer(context),
+      child: RawKeyboardListener(
+        focusNode: _focusNode,
+        autofocus: true,
+        onKey: _onKey,
+        child: buildContainer(context),
+      ),
     );
   }
 

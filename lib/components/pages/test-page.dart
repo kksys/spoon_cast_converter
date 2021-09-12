@@ -16,6 +16,8 @@ class TestPage extends StatefulWidget {
 }
 
 class _TestPageState extends State<TestPage> {
+  List<int> selectedRow = [];
+
   @override
   Widget build(BuildContext context) {
     final padding = EdgeInsets.all(16);
@@ -61,6 +63,12 @@ class _TestPageState extends State<TestPage> {
       width: size.width - padding,
       height: panelHeight,
       child: AppTable(
+        selectedRow: this.selectedRow,
+        onSelected: (list) {
+          setState(() {
+            this.selectedRow = list;
+          });
+        },
         columns: [
           const AppTableColumn(
             width: 80.0,
@@ -85,7 +93,7 @@ class _TestPageState extends State<TestPage> {
           ),
         ],
         rows: [
-          ...List.generate(56, (index) {
+          ...List.generate(6, (index) {
             final Uuid uuid = Uuid();
             return AppTableRow(
               children: [

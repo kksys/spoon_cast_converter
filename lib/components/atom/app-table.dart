@@ -83,6 +83,7 @@ class AppTable extends StatefulWidget {
   final List<AppTableRow> rows;
   final AppTableSelectionType selectionType;
   final Function(List<int>)? onSelected;
+  final List<int> selectedRow;
 
   const AppTable({
     Key? key,
@@ -90,6 +91,7 @@ class AppTable extends StatefulWidget {
     required this.rows,
     this.selectionType = AppTableSelectionType.SINGLE_ROW_SELECTION,
     this.onSelected,
+    this.selectedRow = const [],
   }) : super(key: key);
 
   _AppTable createState() => _AppTable();
@@ -198,10 +200,11 @@ class _AppTable extends State<AppTable> {
     });
   }
 
-  List<int> _selectedRow = [];
   bool _multiSelectionKeyPressed = false;
 
   void _onCellClick(int row) {
+    List<int> _selectedRow = [...this.widget.selectedRow];
+
     setState(() {
       if (this.widget.selectionType == AppTableSelectionType.SINGLE_ROW_SELECTION ||
           (this.widget.selectionType == AppTableSelectionType.MULTI_ROW_SELECTION &&
@@ -214,7 +217,7 @@ class _AppTable extends State<AppTable> {
       }
     });
 
-    this.widget.onSelected?.call(this._selectedRow);
+    this.widget.onSelected?.call(_selectedRow);
   }
 
   void _onKey(RawKeyEvent event) {
@@ -385,7 +388,7 @@ class _AppTable extends State<AppTable> {
         ? MacosColors.alternatingContentBackgroundColor
         : MacosColors.textBackgroundColor;
 
-    if (_selectedRow.contains(index)) {
+    if (this.widget.selectedRow.contains(index)) {
       backgroundColor = MacosColors.selectedControlBackgroundColor;
     }
 

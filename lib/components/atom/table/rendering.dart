@@ -42,6 +42,7 @@ class MacosStyleRenderTable extends RenderBox {
     List<List<RenderBox>>? children,
     List<RenderBox> headers = const [],
     Function(List<double>)? changedColumnWidthCallback,
+    Function(Size)? changedViewportSizeCallback,
   })  : assert(columns == null || columns >= 0),
         assert(rows == null || rows >= 0),
         assert(rows == null || children == null),
@@ -61,9 +62,11 @@ class MacosStyleRenderTable extends RenderBox {
     headers.forEach(addHeader);
     children?.forEach(addRow);
     _changedColumnWidthCallback = changedColumnWidthCallback;
+    _changedViewportSizeCallback = changedViewportSizeCallback;
   }
 
   Function(List<double>)? _changedColumnWidthCallback;
+  Function(Size)? _changedViewportSizeCallback;
 
   List<RenderBox?> _headers = const <RenderBox?>[];
 
@@ -304,6 +307,10 @@ class MacosStyleRenderTable extends RenderBox {
 
   void setChangedColumnWidthCallback(Function(List<double>)? callback) {
     _changedColumnWidthCallback = callback;
+  }
+
+  void setChangedViewportSizeCallback(Function(Size)? callback) {
+    _changedViewportSizeCallback = callback;
   }
 
   void setHeaders(List<RenderBox> headers) {
@@ -837,15 +844,12 @@ class MacosStyleRenderTable extends RenderBox {
         final TableCellParentData headerParentData = header.parentData! as TableCellParentData;
         final offset = this.localToGlobal(
           Offset.zero + Offset(headerParentData.offset.dx, 0),
-          ancestor: ((this.parent! as RenderBox).parent! as RenderBox).parent! as RenderBox,
+          ancestor: (this.parent! as RenderBox).parent! as RenderBox,
         );
-        // print('mouse position: $position');
-        // print('offset: ${Offset(offset.dx, -offset.dy)}');
         final bool isHit = result.addWithPaintOffset(
           offset: Offset(offset.dx, -offset.dy),
           position: position,
           hitTest: (BoxHitTestResult result, Offset? transformed) {
-            // print('transformed: $transformed');
             assert(transformed == position - Offset(offset.dx, -offset.dy));
             return header.hitTest(result, position: transformed!);
           },
@@ -871,6 +875,16 @@ class MacosStyleRenderTable extends RenderBox {
     return false;
   }
 
+  Offset calculateHeaderOffset() {
+    final globalTableContainerOffset =
+        ((((this.parent! as RenderBox).parent! as RenderBox).parent! as RenderBox).parent!
+                as RenderBox)
+            .localToGlobal(Offset.zero);
+    final globalTableOffset = this.localToGlobal(Offset.zero);
+
+    return globalTableContainerOffset - globalTableOffset;
+  }
+
   @override
   void paint(PaintingContext context, Offset offset) {
     assert(_children.length == rows * columns);
@@ -890,7 +904,6 @@ class MacosStyleRenderTable extends RenderBox {
         if (_rowDecorations!.length <= y) break;
         if (_rowDecorations![y] != null) {
           _rowDecorationPainters![y] ??= _rowDecorations![y]!.createBoxPainter(markNeedsPaint);
-          print(offset);
           _rowDecorationPainters![y]!.paint(
             canvas,
             Offset(offset.dx, offset.dy + _rowTops[y]),
@@ -925,17 +938,20 @@ class MacosStyleRenderTable extends RenderBox {
       final RenderBox? nextHeader = (index != _headers.length - 1) ? _headers[index + 1] : null;
 
       if (header != null) {
+        final relativeOffset = this.calculateHeaderOffset();
         final BoxParentData headerParentData = header.parentData! as BoxParentData;
-        context.paintChild(header, Offset(headerParentData.offset.dx + offset.dx, 0));
+        context.paintChild(
+            header, Offset(headerParentData.offset.dx + offset.dx, relativeOffset.dy + offset.dy));
       }
 
       if (nextHeader != null) {
+        final relativeOffset = this.calculateHeaderOffset();
         final BoxParentData headerParentData = nextHeader.parentData! as BoxParentData;
 
         context.canvas.save();
         context.canvas.drawLine(
-          Offset(headerParentData.offset.dx + offset.dx, 3),
-          Offset(headerParentData.offset.dx + offset.dx, 23),
+          Offset(headerParentData.offset.dx + offset.dx, relativeOffset.dy + offset.dy + 3),
+          Offset(headerParentData.offset.dx + offset.dx, relativeOffset.dy + offset.dy + 23),
           Paint()
             ..color = MacosColors.windowBackgroundColor
             ..strokeWidth = 2
@@ -944,6 +960,8 @@ class MacosStyleRenderTable extends RenderBox {
         context.canvas.restore();
       }
     }
+
+    this._changedViewportSizeCallback?.call(this.size);
     this._changedColumnWidthCallback?.call(_headers.map((e) => e?.size.width ?? 0).toList());
   }
 

@@ -4,6 +4,7 @@ import 'dart:math';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -107,16 +108,28 @@ class _AppTable extends State<AppTable> {
   late List<double> _widthForCalculate;
   FocusNode _focusNode = FocusNode();
 
+  late ScrollController _verticalScrollController;
+  late ScrollController _horizontalScrollController;
+
   @override
   void initState() {
     super.initState();
     _widthForView = _widthForCalculate = widget.columns.map((e) => e.width).toList();
     _widthForViewIncludeLast = [..._widthForView, 0];
+
+    _verticalScrollController = ScrollController()..addListener(_verticalScrolled);
+    _horizontalScrollController = ScrollController()..addListener(_horizontalScrolled);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _verticalScrollController.dispose();
+    _horizontalScrollController.dispose();
   }
 
   void _onDoubleClickDown(int index, TapDownDetails detail) {
-    print('_onDoubleClickDown: $index, ${detail.localPosition}');
-
     if (index < _widthForCalculate.length &&
         detail.localPosition.dx > _widthForCalculate[index] - 2 &&
         detail.localPosition.dx <= _widthForCalculate[index]) {
@@ -131,8 +144,6 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDoubleClick(int index) {
-    print('_onDoubleClick: $index');
-
     setState(() {
       if (_targetIndex2 != null) {
         _widthForViewIncludeLast[_targetIndex2!] = _widthForView[_targetIndex2!] = -1;
@@ -142,8 +153,6 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDragStart(int index, DragDownDetails detail) {
-    print('_onDragStart: ${detail.localPosition}');
-
     if (index < _widthForCalculate.length &&
         detail.localPosition.dx > _widthForCalculate[index] - 2 &&
         detail.localPosition.dx <= _widthForCalculate[index]) {
@@ -164,8 +173,6 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDragMove(int index, DragUpdateDetails detail) {
-    print('_onDragMove: ${detail.localPosition}');
-
     setState(() {
       if (_targetIndex != null && _currentPos != null && _mouseDiffPos != null) {
         _currentPos = _currentPos! + detail.delta.dx;
@@ -191,8 +198,6 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDragStop(int index) {
-    print('_onDragStop:');
-
     setState(() {
       _targetIndex = null;
       _currentPos = null;
@@ -258,6 +263,61 @@ class _AppTable extends State<AppTable> {
   final _key = GlobalKey();
   Size? _size;
 
+  final _verticalScrollBarKey = ScrollBar.makeGlobalKey();
+  final _horizontalScrollBarKey = ScrollBar.makeGlobalKey();
+  double _verticalScrollPosition = 0;
+  double _horizontalScrollPosition = 0;
+
+  double _calculateScrollPosition(double position, ScrollController controller) {
+    final minPosition = controller.position.minScrollExtent;
+    final maxPosition = controller.position.maxScrollExtent;
+
+    return position * (maxPosition - minPosition) + minPosition;
+  }
+
+  void _update() {
+    if (!mounted) return;
+
+    final hPos = _calculateScrollPosition(
+      _horizontalScrollPosition,
+      _horizontalScrollController,
+    );
+    final vPos = _calculateScrollPosition(
+      _verticalScrollPosition,
+      _verticalScrollController,
+    );
+    _horizontalScrollController.jumpTo(hPos);
+    _verticalScrollController.jumpTo(vPos);
+
+    setState(() {});
+  }
+
+  void _verticalScrollUpdate(double position, {bool updateGrid = true}) {
+    _verticalScrollPosition = position;
+    if (updateGrid) _update();
+  }
+
+  void _horizontalScrollUpdate(double position, {bool updateGrid = true}) {
+    _horizontalScrollPosition = position;
+    if (updateGrid) _update();
+  }
+
+  void _verticalScrolled() {
+    final position = _verticalScrollController.offset /
+        (_verticalScrollController.position.maxScrollExtent -
+            _verticalScrollController.position.minScrollExtent);
+    _verticalScrollBarKey.currentState?.position = _verticalScrollPosition = position;
+    setState(() {});
+  }
+
+  void _horizontalScrolled() {
+    final position = _horizontalScrollController.offset /
+        (_horizontalScrollController.position.maxScrollExtent -
+            _horizontalScrollController.position.minScrollExtent);
+    _horizontalScrollBarKey.currentState?.position = _horizontalScrollPosition = position;
+    setState(() {});
+  }
+
   Widget buildContainer(BuildContext context) {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       if (_size != _key.currentContext?.size) {
@@ -282,21 +342,61 @@ class _AppTable extends State<AppTable> {
                 width: 1.0,
               ),
             ),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.zero,
-              physics: ClampingScrollPhysics(),
-              child: SingleChildScrollView(
-                padding: EdgeInsets.zero,
-                physics: ClampingScrollPhysics(),
-                child: Container(
-                  constraints: BoxConstraints(
-                    minWidth: _size!.width > 0 ? _size!.width - 2 : 0,
-                    minHeight: _size!.height > 0 ? _size!.height - 2 : 0,
+            child: Stack(
+              children: [
+                ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    scrollbars: false,
                   ),
-                  child: buildTable(context),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: ClampingScrollPhysics(),
+                    controller: _horizontalScrollController,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      physics: ClampingScrollPhysics(),
+                      controller: _verticalScrollController,
+                      child: Container(
+                        constraints: BoxConstraints(
+                          minWidth: _size!.width > 0 ? _size!.width - 2 : 0,
+                          minHeight: _size!.height > 0 ? _size!.height - 2 : 0,
+                        ),
+                        child: buildTable(context),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                ScrollBar(
+                  globalKey: _verticalScrollBarKey,
+                  onUpdate: _verticalScrollUpdate,
+                  handleSize: (_size!.height - 2) /
+                      (_tableViewportSize?.height != null
+                          ? _tableViewportSize!.height
+                          : (_size!.height - 2)),
+                  orientation: ScrollBarOrientation.vertical,
+                  top: 1,
+                  right: 1,
+                  bottom: 1,
+                  left: null,
+                  width: 3,
+                  height: _size!.height - 2,
+                ),
+                ScrollBar(
+                  globalKey: _horizontalScrollBarKey,
+                  onUpdate: _horizontalScrollUpdate,
+                  handleSize: (_size!.width - 2) /
+                      (_tableViewportSize?.width != null
+                          ? _tableViewportSize!.width
+                          : (_size!.width - 2)),
+                  orientation: ScrollBarOrientation.horizontal,
+                  top: null,
+                  right: 1,
+                  bottom: 1,
+                  left: 1,
+                  width: _size!.width - 2,
+                  height: 3,
+                )
+              ],
             ),
           ))
       ],
@@ -407,6 +507,8 @@ class _AppTable extends State<AppTable> {
     );
   }
 
+  Size? _tableViewportSize;
+
   Widget buildTable(BuildContext context) {
     return MacosStyleTable(
       columnWidths: [
@@ -415,9 +517,14 @@ class _AppTable extends State<AppTable> {
       ].asMap(),
       onChangeColumnWidth: (widthList) {
         final newWidthList = widthList.sublist(0, this.widget.columns.length);
-        print(widthList);
         _widthForCalculate = newWidthList;
         _widthForViewIncludeLast = widthList;
+      },
+      onChangedViewportSize: (size) {
+        if (_tableViewportSize != size) {
+          _tableViewportSize = size;
+          Future.delayed(Duration(milliseconds: 0), () => setState(() {}));
+        }
       },
       headers: [
         ...this.widget.columns.asMap().map((index, e) {

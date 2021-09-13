@@ -1,18 +1,16 @@
 // Dart imports:
+import 'dart:async';
 import 'dart:collection';
+import 'dart:math';
 
 // Flutter imports:
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
 // Project imports:
 import 'package:spoon_cast_converter/components/atom/table/rendering.dart';
-
-// import 'basic.dart';
-// import 'debug.dart';
-// import 'framework.dart';
-// import 'image.dart';
 
 export 'package:flutter/rendering.dart'
     show
@@ -25,6 +23,260 @@ export 'package:flutter/rendering.dart'
         TableBorder,
         TableCellVerticalAlignment,
         TableColumnWidth;
+
+enum ScrollBarOrientation {
+  vertical,
+  horizontal,
+}
+
+class ScrollBar extends StatefulWidget {
+  final GlobalKey<_ScrollBarState> globalKey;
+  final void Function(double, {bool updateGrid}) onUpdate;
+  final double handleSize;
+  final ScrollBarOrientation orientation;
+  final double? top;
+  final double? left;
+  final double? bottom;
+  final double? right;
+  final double width;
+  final double height;
+
+  static GlobalKey<_ScrollBarState> makeGlobalKey() {
+    return GlobalKey<_ScrollBarState>();
+  }
+
+  ScrollBar({
+    required this.globalKey,
+    required this.onUpdate,
+    required this.handleSize,
+    required this.orientation,
+    required this.top,
+    required this.left,
+    required this.bottom,
+    required this.right,
+    required this.width,
+    required this.height,
+  }) : super(key: globalKey);
+
+  @override
+  _ScrollBarState createState() => _ScrollBarState();
+}
+
+class _ScrollBarState extends State<ScrollBar> {
+  double position = -1;
+  double downPos = 0;
+  Timer? scrollTimer;
+  Color handleColor = Colors.white;
+  bool entered = false;
+  bool tap2 = false;
+  double scrollFactor = 1;
+  double _lastBuildSize = 0;
+
+  late double handleSize;
+
+  @override
+  void initState() {
+    super.initState();
+    handleSize = widget.handleSize;
+  }
+
+  void updateScroll(double delta, {bool updateGrid = true}) {
+    position += delta;
+    _fixPos();
+    update();
+    widget.onUpdate(position * scrollFactor, updateGrid: updateGrid);
+  }
+
+  void update() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  void _fixPos() {
+    if (position < 0)
+      position = 0;
+    else if (position > 1) position = 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isVertical = widget.orientation == ScrollBarOrientation.vertical;
+
+    return Positioned(
+      top: widget.top,
+      bottom: widget.bottom,
+      left: widget.left,
+      right: widget.right,
+      child: SizedBox(
+        width: widget.width,
+        height: widget.height,
+        child: LayoutBuilder(
+          builder: (context, box) {
+            double handleHeight = 0;
+            double handleWidth = 0;
+            double defaultHandleHeight = 0;
+            double defaultHandleWidth = 0;
+            scrollFactor = 1;
+            final offset = 20;
+            late double buildSize;
+
+            if (isVertical) {
+              buildSize = box.maxHeight;
+              defaultHandleHeight = widget.handleSize * buildSize;
+              handleWidth = box.maxWidth;
+
+              handleHeight = max(30, defaultHandleHeight);
+              scrollFactor = (buildSize == handleHeight)
+                  ? 1
+                  : (buildSize - defaultHandleHeight) / (buildSize - handleHeight);
+              handleSize *= handleHeight / defaultHandleHeight;
+            } else {
+              buildSize = box.maxWidth;
+              defaultHandleWidth = widget.handleSize * buildSize;
+              handleHeight = box.maxHeight;
+
+              handleWidth = max(30, defaultHandleWidth);
+              scrollFactor = (buildSize == handleWidth)
+                  ? 1
+                  : (buildSize - defaultHandleWidth) / (buildSize - handleWidth);
+              handleSize *= handleWidth / defaultHandleWidth;
+            }
+
+            if (_lastBuildSize != 0 && buildSize > _lastBuildSize) {
+              position *= buildSize / _lastBuildSize;
+            }
+
+            _lastBuildSize = buildSize;
+
+            _fixPos();
+
+            double _getPosition(dynamic details) {
+              if (isVertical) return details.localPosition.dy;
+              return details.localPosition.dx;
+            }
+
+            double _getBoxSize(BoxConstraints box) {
+              if (isVertical) return box.maxHeight;
+              return box.maxWidth;
+            }
+
+            if (tap2 || entered) {
+              handleColor = Colors.grey;
+            } else {
+              handleColor = Colors.white;
+            }
+
+            return Listener(
+              onPointerDown: (details) {
+                if (tap2) return;
+
+                if (scrollTimer == null) {
+                  final downPos = (_getPosition(details) - offset) / _getBoxSize(box);
+                  final delta = (downPos - position) / 10;
+
+                  scrollTimer = Timer.periodic(Duration(milliseconds: 16), (timer) {
+                    position += delta;
+                    if ((position - downPos).abs() < delta.abs()) {
+                      position = downPos;
+                      timer.cancel();
+                      scrollTimer = null;
+                    }
+                    _fixPos();
+                    update();
+                    widget.onUpdate(position * scrollFactor, updateGrid: true);
+                  });
+                }
+              },
+              onPointerUp: (details) {
+                if (tap2) return;
+                if (scrollTimer != null) {
+                  scrollTimer!.cancel();
+                  scrollTimer = null;
+                }
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: Stack(
+                  children: [
+                    Positioned(
+                        top: isVertical ? (position) * (_getBoxSize(box) - handleHeight) : null,
+                        left: isVertical
+                            ? 0.5 * (box.maxWidth - handleWidth)
+                            : (position) * (_getBoxSize(box) - handleWidth),
+                        bottom: isVertical ? null : 0.5 * (box.maxHeight - handleHeight),
+                        // top: null,
+                        // left: null,
+                        // bottom: null,
+                        child: SizedBox(
+                          width: handleWidth,
+                          height: handleHeight,
+                          child: Listener(
+                            onPointerDown: (details) {
+                              tap2 = true;
+                              downPos = _getPosition(details);
+                              update();
+                            },
+                            onPointerUp: (details) {
+                              // position += delta;
+                              tap2 = false;
+                              entered = false;
+                              update();
+                            },
+                            onPointerMove: (details) {
+                              final currentPos = _getPosition(details);
+                              double delta = 0;
+                              if (_getBoxSize(box) != (isVertical ? handleHeight : handleWidth)) {
+                                delta = (currentPos - downPos) /
+                                    (_getBoxSize(box) - (isVertical ? handleHeight : handleWidth));
+                              }
+                              position += delta;
+                              _fixPos();
+                              downPos = currentPos;
+                              widget.onUpdate(position * scrollFactor);
+                            },
+                            child: MouseRegion(
+                              onEnter: (details) {
+                                entered = true;
+                                update();
+                              },
+                              onExit: (details) {
+                                if (tap2) return;
+                                entered = false;
+                                update();
+                              },
+                              child: Container(
+                                // color: Colors.grey,
+                                decoration: BoxDecoration(
+                                  color: handleColor,
+                                  // borderRadius: BorderRadius.only(
+                                  //     topLeft: Radius.circular(10),
+                                  //     topRight: Radius.circular(10),
+                                  //     bottomLeft: Radius.circular(10),
+                                  //     bottomRight: Radius.circular(10)),
+                                  borderRadius: BorderRadius.circular(10),
+                                  // boxShadow: [
+                                  //   BoxShadow(
+                                  //     color: Colors.grey.withOpacity(0.5),
+                                  //     spreadRadius: 5,
+                                  //     blurRadius: 7,
+                                  //     offset: Offset(0, 3), // changes position of shadow
+                                  //   ),
+                                  // ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
 
 /// A horizontal group of cells in a [Table].
 ///
@@ -178,6 +430,7 @@ class MacosStyleTable extends RenderObjectWidget {
     this.headers = const <MacosStyleTableColumn>[],
     this.children = const <MacosStyleTableRow>[],
     this.onChangeColumnWidth,
+    this.onChangedViewportSize,
     this.columnWidths,
     this.defaultColumnWidth = const FlexColumnWidth(1.0),
     this.textDirection,
@@ -274,6 +527,7 @@ class MacosStyleTable extends RenderObjectWidget {
   final Map<int, TableColumnWidth>? columnWidths;
 
   final Function(List<double>)? onChangeColumnWidth;
+  final Function(Size)? onChangedViewportSize;
 
   /// How to determine with widths of columns that don't have an explicit sizing
   /// algorithm.
@@ -327,6 +581,7 @@ class MacosStyleTable extends RenderObjectWidget {
       defaultVerticalAlignment: defaultVerticalAlignment,
       textBaseline: textBaseline,
       changedColumnWidthCallback: onChangeColumnWidth,
+      changedViewportSizeCallback: onChangedViewportSize,
     );
   }
 
@@ -337,6 +592,7 @@ class MacosStyleTable extends RenderObjectWidget {
     assert(renderObject.rows == children.length);
     renderObject
       ..setChangedColumnWidthCallback(this.onChangeColumnWidth)
+      ..setChangedViewportSizeCallback(this.onChangedViewportSize)
       ..columnWidths = columnWidths
       ..defaultColumnWidth = defaultColumnWidth
       ..textDirection = textDirection ?? Directionality.of(context)

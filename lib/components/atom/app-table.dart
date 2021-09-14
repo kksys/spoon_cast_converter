@@ -268,21 +268,28 @@ class _AppTable extends State<AppTable> {
   double _verticalScrollPosition = 0;
   double _horizontalScrollPosition = 0;
 
-  double _calculateScrollPosition(double position, ScrollController controller) {
+  double _calculateScrollOffset(double position, ScrollController controller) {
     final minPosition = controller.position.minScrollExtent;
     final maxPosition = controller.position.maxScrollExtent;
 
     return position * (maxPosition - minPosition) + minPosition;
   }
 
+  double _calculateScrollPosition(double offset, ScrollController controller) {
+    final minPosition = controller.position.minScrollExtent;
+    final maxPosition = controller.position.maxScrollExtent;
+
+    return (maxPosition != minPosition) ? offset / (maxPosition - minPosition) : 1;
+  }
+
   void _update() {
     if (!mounted) return;
 
-    final hPos = _calculateScrollPosition(
+    final hPos = _calculateScrollOffset(
       _horizontalScrollPosition,
       _horizontalScrollController,
     );
-    final vPos = _calculateScrollPosition(
+    final vPos = _calculateScrollOffset(
       _verticalScrollPosition,
       _verticalScrollController,
     );
@@ -303,17 +310,19 @@ class _AppTable extends State<AppTable> {
   }
 
   void _verticalScrolled() {
-    final position = _verticalScrollController.offset /
-        (_verticalScrollController.position.maxScrollExtent -
-            _verticalScrollController.position.minScrollExtent);
+    final position = _calculateScrollPosition(
+      _verticalScrollController.offset,
+      _verticalScrollController,
+    );
     _verticalScrollBarKey.currentState?.position = _verticalScrollPosition = position;
     setState(() {});
   }
 
   void _horizontalScrolled() {
-    final position = _horizontalScrollController.offset /
-        (_horizontalScrollController.position.maxScrollExtent -
-            _horizontalScrollController.position.minScrollExtent);
+    final position = _calculateScrollPosition(
+      _horizontalScrollController.offset,
+      _horizontalScrollController,
+    );
     _horizontalScrollBarKey.currentState?.position = _horizontalScrollPosition = position;
     setState(() {});
   }

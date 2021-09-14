@@ -117,8 +117,8 @@ class _AppTable extends State<AppTable> {
     _widthForView = _widthForCalculate = widget.columns.map((e) => e.width).toList();
     _widthForViewIncludeLast = [..._widthForView, 0];
 
-    _verticalScrollController = ScrollController()..addListener(_verticalScrolled);
-    _horizontalScrollController = ScrollController()..addListener(_horizontalScrolled);
+    _verticalScrollController = ScrollController()..addListener(_scrolledVerticalScrollView);
+    _horizontalScrollController = ScrollController()..addListener(_scrolledHorizontalScrollView);
   }
 
   @override
@@ -227,11 +227,15 @@ class _AppTable extends State<AppTable> {
 
   void _onKey(RawKeyEvent event) {
     final multipleSelectionKeyList = (Platform.isMacOS)
-        ? [LogicalKeyboardKey.meta, LogicalKeyboardKey.metaLeft, LogicalKeyboardKey.metaRight]
+        ? [
+            LogicalKeyboardKey.meta,
+            LogicalKeyboardKey.metaLeft,
+            LogicalKeyboardKey.metaRight,
+          ]
         : [
             LogicalKeyboardKey.control,
             LogicalKeyboardKey.controlLeft,
-            LogicalKeyboardKey.controlRight
+            LogicalKeyboardKey.controlRight,
           ];
 
     if (!multipleSelectionKeyList.any((element) => element == event.logicalKey)) {
@@ -255,7 +259,7 @@ class _AppTable extends State<AppTable> {
         focusNode: _focusNode,
         autofocus: true,
         onKey: _onKey,
-        child: buildContainer(context),
+        child: _buildContainer(context),
       ),
     );
   }
@@ -299,17 +303,17 @@ class _AppTable extends State<AppTable> {
     setState(() {});
   }
 
-  void _verticalScrollUpdate(double position, {bool updateGrid = true}) {
+  void _updatedVerticalScrollbar(double position, {bool updateGrid = true}) {
     _verticalScrollPosition = position;
     if (updateGrid) _update();
   }
 
-  void _horizontalScrollUpdate(double position, {bool updateGrid = true}) {
+  void _updatedHorizontalScrollbar(double position, {bool updateGrid = true}) {
     _horizontalScrollPosition = position;
     if (updateGrid) _update();
   }
 
-  void _verticalScrolled() {
+  void _scrolledVerticalScrollView() {
     final position = _calculateScrollPosition(
       _verticalScrollController.offset,
       _verticalScrollController,
@@ -318,7 +322,7 @@ class _AppTable extends State<AppTable> {
     setState(() {});
   }
 
-  void _horizontalScrolled() {
+  void _scrolledHorizontalScrollView() {
     final position = _calculateScrollPosition(
       _horizontalScrollController.offset,
       _horizontalScrollController,
@@ -327,7 +331,7 @@ class _AppTable extends State<AppTable> {
     setState(() {});
   }
 
-  Widget buildContainer(BuildContext context) {
+  Widget _buildContainer(BuildContext context) {
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       if (_size != _key.currentContext?.size) {
         setState(() {
@@ -357,27 +361,30 @@ class _AppTable extends State<AppTable> {
                   behavior: ScrollConfiguration.of(context).copyWith(
                     scrollbars: false,
                   ),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: ClampingScrollPhysics(),
-                    controller: _horizontalScrollController,
+                  // Prevent unidentified scrollbars from appearing for some reason.
+                  child: _buildRemoveUnidentifiedScrollbar(
                     child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      physics: ClampingScrollPhysics(),
-                      controller: _verticalScrollController,
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minWidth: _size!.width > 0 ? _size!.width - 2 : 0,
-                          minHeight: _size!.height > 0 ? _size!.height - 2 : 0,
+                      scrollDirection: Axis.horizontal,
+                      physics: BouncingScrollPhysics(),
+                      controller: _horizontalScrollController,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.vertical,
+                        physics: BouncingScrollPhysics(),
+                        controller: _verticalScrollController,
+                        child: Container(
+                          constraints: BoxConstraints(
+                            minWidth: _size!.width > 0 ? _size!.width - 2 : 0,
+                            minHeight: _size!.height > 0 ? _size!.height - 2 : 0,
+                          ),
+                          child: _buildTable(context),
                         ),
-                        child: buildTable(context),
                       ),
                     ),
                   ),
                 ),
                 ScrollBar(
                   globalKey: _verticalScrollBarKey,
-                  onUpdate: _verticalScrollUpdate,
+                  onUpdate: _updatedVerticalScrollbar,
                   handleSize: (_size!.height - 2) /
                       (_tableViewportSize?.height != null
                           ? _tableViewportSize!.height
@@ -392,7 +399,7 @@ class _AppTable extends State<AppTable> {
                 ),
                 ScrollBar(
                   globalKey: _horizontalScrollBarKey,
-                  onUpdate: _horizontalScrollUpdate,
+                  onUpdate: _updatedHorizontalScrollbar,
                   handleSize: (_size!.width - 2) /
                       (_tableViewportSize?.width != null
                           ? _tableViewportSize!.width
@@ -412,7 +419,7 @@ class _AppTable extends State<AppTable> {
     );
   }
 
-  MacosStyleTableColumn generateColumn({
+  MacosStyleTableColumn _buildColumn({
     required int index,
     required Widget child,
   }) {
@@ -489,7 +496,7 @@ class _AppTable extends State<AppTable> {
     );
   }
 
-  MacosStyleTableCell generateCell({
+  MacosStyleTableCell _buildCell({
     required int index,
     required Widget child,
   }) {
@@ -518,7 +525,7 @@ class _AppTable extends State<AppTable> {
 
   Size? _tableViewportSize;
 
-  Widget buildTable(BuildContext context) {
+  Widget _buildTable(BuildContext context) {
     return MacosStyleTable(
       columnWidths: [
         ..._widthForView.map((e) => e < 0 ? IntrinsicColumnWidth() : FixedColumnWidth(e)).toList(),
@@ -539,13 +546,13 @@ class _AppTable extends State<AppTable> {
         ...this.widget.columns.asMap().map((index, e) {
           return MapEntry(
             index,
-            generateColumn(
+            _buildColumn(
               index: index,
               child: e.child,
             ),
           );
         }).values,
-        generateColumn(
+        _buildColumn(
           index: this.widget.columns.length,
           child: const AppText(''),
         ),
@@ -557,12 +564,12 @@ class _AppTable extends State<AppTable> {
             MacosStyleTableRow(
               children: [
                 ...e.children.map((cell) {
-                  return generateCell(
+                  return _buildCell(
                     index: index,
                     child: cell.child,
                   );
                 }),
-                generateCell(
+                _buildCell(
                   index: index,
                   child: const AppText(''),
                 ),
@@ -571,6 +578,20 @@ class _AppTable extends State<AppTable> {
           );
         }).values,
       ],
+    );
+  }
+
+  Widget _buildRemoveUnidentifiedScrollbar({
+    required Widget child,
+  }) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: NeverScrollableScrollPhysics(),
+      child: SizedBox(
+        width: _size!.width - 2,
+        height: _size!.height - 2,
+        child: child,
+      ),
     );
   }
 }

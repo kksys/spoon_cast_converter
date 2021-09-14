@@ -13,7 +13,7 @@ import 'package:macos_ui/macos_ui.dart';
 
 // Project imports:
 import 'package:spoon_cast_converter/components/atom/app-text.dart';
-import 'package:spoon_cast_converter/components/atom/table/widget.dart';
+import 'package:spoon_cast_converter/components/atom/table/index.dart';
 
 class AppTableColumn extends StatefulWidget {
   final double width;
@@ -500,9 +500,7 @@ class _AppTable extends State<AppTable> {
     required int index,
     required Widget child,
   }) {
-    Color backgroundColor = (index % 2 > 0)
-        ? MacosColors.alternatingContentBackgroundColor
-        : MacosColors.textBackgroundColor;
+    Color backgroundColor = Colors.transparent;
 
     if (this.widget.selectedRow.contains(index)) {
       backgroundColor = MacosColors.selectedControlBackgroundColor;
@@ -512,7 +510,7 @@ class _AppTable extends State<AppTable> {
       child: GestureDetector(
         onTap: () => this._onCellClick(index),
         child: Container(
-          margin: (index > 0) ? EdgeInsets.zero : EdgeInsets.only(top: 5.0),
+          margin: (index > 0) ? EdgeInsets.zero : EdgeInsets.only(top: TABLE_PADDING_TOP),
           padding: EdgeInsets.only(left: 3.0, right: 3.0),
           decoration: BoxDecoration(
             color: backgroundColor,

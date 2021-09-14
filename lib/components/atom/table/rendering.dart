@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:macos_ui/macos_ui.dart';
 
 // Project imports:
+import 'package:spoon_cast_converter/components/atom/table/constants.dart';
 import 'package:spoon_cast_converter/components/atom/table/widget.dart';
 
 /// A table where the columns and rows are sized to fit the contents of the cells.
@@ -755,7 +756,7 @@ class MacosStyleRenderTable extends RenderBox {
 
     for (int y = 0; y < rows; y += 1) {
       _rowTops.add(rowTop);
-      double rowHeight = 0.0;
+      double rowHeight = TABLE_MINIMUM_HEIGHT;
       bool haveBaseline = false;
       double beforeBaselineDistance = 0.0;
       double afterBaselineDistance = 0.0;
@@ -912,6 +913,10 @@ class MacosStyleRenderTable extends RenderBox {
         }
       }
     }
+
+    // render the zebra backgrond
+    _paintZebraBackground(context, offset);
+
     for (int index = 0; index < _children.length; index += 1) {
       final RenderBox? child = _children[index];
       if (child != null) {
@@ -1001,5 +1006,45 @@ class MacosStyleRenderTable extends RenderBox {
       }
     }
     return children;
+  }
+
+  void _paintZebraBackground(PaintingContext context, Offset offset) {
+    List<Offset> offsets = [];
+    List<double> heights = [];
+    double currentOffset = 0;
+
+    for (int y = 0; y < rows; y += 1) {
+      final RenderBox? child = _children[y * columns];
+      assert(child != null);
+
+      if (child != null) {
+        final BoxParentData childParentData = child.parentData! as BoxParentData;
+
+        offsets.add(childParentData.offset);
+        heights.add(child.size.height);
+
+        currentOffset = childParentData.offset.dy + child.size.height;
+      }
+    }
+
+    while (currentOffset < constraints.minHeight) {
+      offsets.add(Offset(0, currentOffset));
+      heights.add(TABLE_MINIMUM_HEIGHT);
+
+      currentOffset += TABLE_MINIMUM_HEIGHT;
+    }
+
+    for (int y = 0; y < offsets.length; y += 1) {
+      context.canvas.save();
+      context.canvas.drawRect(
+        Rect.fromLTWH(offsets[y].dx + offset.dx, offsets[y].dy + offset.dy, size.width, heights[y]),
+        Paint()
+          ..color = (y % 2 > 0)
+              ? MacosColors.alternatingContentBackgroundColor
+              : MacosColors.textBackgroundColor
+          ..style = PaintingStyle.fill,
+      );
+      context.canvas.restore();
+    }
   }
 }

@@ -453,7 +453,12 @@ class _AppTable extends State<AppTable> {
             children: [
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(3.0),
+                padding: EdgeInsets.only(
+                  top: TABLE_HEADER_PADDING_VERTICAL,
+                  bottom: TABLE_HEADER_PADDING_VERTICAL,
+                  left: TABLE_HEADER_PADDING_HORIZONTAL,
+                  right: TABLE_HEADER_PADDING_HORIZONTAL,
+                ),
                 decoration: BoxDecoration(
                   color: MacosColors.textBackgroundColor,
                   border: Border(
@@ -511,7 +516,12 @@ class _AppTable extends State<AppTable> {
         onTap: () => this._onCellClick(index),
         child: Container(
           margin: (index > 0) ? EdgeInsets.zero : EdgeInsets.only(top: TABLE_PADDING_TOP),
-          padding: EdgeInsets.only(left: 3.0, right: 3.0),
+          padding: EdgeInsets.only(
+            top: TABLE_CELL_PADDING_VERTICAL,
+            bottom: TABLE_CELL_PADDING_VERTICAL,
+            left: TABLE_CELL_PADDING_HORIZONTAL,
+            right: TABLE_CELL_PADDING_HORIZONTAL,
+          ),
           decoration: BoxDecoration(
             color: backgroundColor,
           ),

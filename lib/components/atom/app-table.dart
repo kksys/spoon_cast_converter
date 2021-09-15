@@ -207,6 +207,10 @@ class _AppTable extends State<AppTable> {
 
   bool _multiSelectionKeyPressed = false;
 
+  void _unselectRows() {
+    this.widget.onSelected?.call([]);
+  }
+
   void _onCellClick(int row) {
     List<int> _selectedRow = [...this.widget.selectedRow];
 
@@ -363,20 +367,23 @@ class _AppTable extends State<AppTable> {
                   ),
                   // Prevent unidentified scrollbars from appearing for some reason.
                   child: _buildRemoveUnidentifiedScrollbar(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: BouncingScrollPhysics(),
-                      controller: _horizontalScrollController,
+                    child: GestureDetector(
+                      onTap: () => _unselectRows(),
                       child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
+                        scrollDirection: Axis.horizontal,
                         physics: BouncingScrollPhysics(),
-                        controller: _verticalScrollController,
-                        child: Container(
-                          constraints: BoxConstraints(
-                            minWidth: _size!.width > 0 ? _size!.width - 2 : 0,
-                            minHeight: _size!.height > 0 ? _size!.height - 2 : 0,
+                        controller: _horizontalScrollController,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.vertical,
+                          physics: BouncingScrollPhysics(),
+                          controller: _verticalScrollController,
+                          child: Container(
+                            constraints: BoxConstraints(
+                              minWidth: _size!.width > 0 ? _size!.width - 2 : 0,
+                              minHeight: _size!.height > 0 ? _size!.height - 2 : 0,
+                            ),
+                            child: _buildTable(context),
                           ),
-                          child: _buildTable(context),
                         ),
                       ),
                     ),
@@ -441,6 +448,7 @@ class _AppTable extends State<AppTable> {
 
     return MacosStyleTableColumn(
       child: GestureDetector(
+        onTap: () {},
         onDoubleTapDown: (detail) => this._onDoubleClickDown(index, detail),
         onDoubleTap: () => this._onDoubleClick(index),
         onHorizontalDragDown: (detail) => this._onDragStart(index, detail),

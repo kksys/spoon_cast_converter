@@ -4,6 +4,7 @@ import 'dart:math';
 
 // Flutter imports:
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -321,7 +322,8 @@ class _AppTable extends State<AppTable> {
       _verticalScrollController.offset,
       _verticalScrollController,
     );
-    _verticalScrollBarKey.currentState?.position = _verticalScrollPosition = position;
+    _verticalScrollPosition = position;
+    _verticalScrollBarKey.currentState?.updatePosition(position);
     setState(() {});
   }
 
@@ -330,7 +332,8 @@ class _AppTable extends State<AppTable> {
       _horizontalScrollController.offset,
       _horizontalScrollController,
     );
-    _horizontalScrollBarKey.currentState?.position = _horizontalScrollPosition = position;
+    _horizontalScrollPosition = position;
+    _horizontalScrollBarKey.currentState?.updatePosition(position);
     setState(() {});
   }
 
@@ -547,14 +550,22 @@ class _AppTable extends State<AppTable> {
         FlexColumnWidth(),
       ].asMap(),
       onChangeColumnWidth: (widthList) {
+        if (!listEquals(_widthForViewIncludeLast, widthList)) {
         final newWidthList = widthList.sublist(0, this.widget.columns.length);
         _widthForCalculate = newWidthList;
         _widthForViewIncludeLast = widthList;
+          setState(() {});
+        }
       },
       onChangedViewportSize: (size) {
         if (_tableViewportSize != size) {
           _tableViewportSize = size;
-          Future.delayed(Duration(milliseconds: 0), () => setState(() {}));
+
+          // update scroll bar position
+          _scrolledHorizontalScrollView();
+          _scrolledVerticalScrollView();
+
+          setState(() {});
         }
       },
       headers: [

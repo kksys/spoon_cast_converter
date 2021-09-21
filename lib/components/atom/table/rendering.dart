@@ -994,8 +994,10 @@ class MacosStyleRenderTable extends RenderBox {
       }
     }
 
+    Future.delayed(Duration(milliseconds: 0), () {
     this._changedViewportSizeCallback?.call(this.size);
     this._changedColumnWidthCallback?.call(_headers.map((e) => e?.size.width ?? 0).toList());
+    });
   }
 
   @override

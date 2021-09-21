@@ -101,6 +101,10 @@ class _ScrollBarState extends State<ScrollBar> {
     else if (position > 1) position = 1;
   }
 
+  void updatePosition(double position) {
+    this.position = position;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isVertical = widget.orientation == ScrollBarOrientation.vertical;

@@ -63,7 +63,7 @@ class _TestPageState extends State<TestPage> {
       width: size.width - padding,
       height: panelHeight,
       child: AppTable(
-        selectedRow: this.selectedRow,
+        selectedRows: this.selectedRow,
         onSelected: (list) {
           setState(() {
             this.selectedRow = list;
@@ -93,7 +93,7 @@ class _TestPageState extends State<TestPage> {
           ),
         ],
         rows: [
-          ...List.generate(6, (index) {
+          ...List.generate(56, (index) {
             final Uuid uuid = Uuid();
             return AppTableRow(
               children: [

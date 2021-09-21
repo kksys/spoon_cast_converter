@@ -9,6 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
+// Package imports:
+import 'package:macos_ui/macos_ui.dart';
+
 // Project imports:
 import 'package:spoon_cast_converter/components/atom/table/rendering.dart';
 
@@ -265,6 +268,15 @@ class _ScrollBarState extends State<ScrollBar> {
   }
 }
 
+@immutable
+class MacosStylePainter {
+  final Color selectedRowBackgroundColor;
+
+  const MacosStylePainter({
+    required this.selectedRowBackgroundColor,
+  });
+}
+
 /// A horizontal group of cells in a [Table].
 ///
 /// Every row in a table must have the same number of children.
@@ -414,6 +426,7 @@ class MacosStyleTable extends RenderObjectWidget {
   /// arguments must not be null.
   MacosStyleTable({
     Key? key,
+    this.selectedRows = const <int>[],
     this.headers = const <MacosStyleTableColumn>[],
     this.children = const <MacosStyleTableRow>[],
     this.onChangeColumnWidth,
@@ -481,6 +494,8 @@ class MacosStyleTable extends RenderObjectWidget {
       return true;
     }());
   }
+
+  final List<int> selectedRows;
 
   /// The headers of the table.
   ///
@@ -559,6 +574,7 @@ class MacosStyleTable extends RenderObjectWidget {
     return MacosStyleRenderTable(
       columns: children.isNotEmpty ? children[0].children!.length : 0,
       rows: children.length,
+      selectedRows: selectedRows,
       columnWidths: columnWidths,
       defaultColumnWidth: defaultColumnWidth,
       textDirection: textDirection ?? Directionality.of(context),
@@ -569,6 +585,7 @@ class MacosStyleTable extends RenderObjectWidget {
       textBaseline: textBaseline,
       changedColumnWidthCallback: onChangeColumnWidth,
       changedViewportSizeCallback: onChangedViewportSize,
+      painter: _generatePainter(context),
     );
   }
 
@@ -580,6 +597,7 @@ class MacosStyleTable extends RenderObjectWidget {
     renderObject
       ..setChangedColumnWidthCallback(this.onChangeColumnWidth)
       ..setChangedViewportSizeCallback(this.onChangedViewportSize)
+      ..selectedRows = selectedRows
       ..columnWidths = columnWidths
       ..defaultColumnWidth = defaultColumnWidth
       ..textDirection = textDirection ?? Directionality.of(context)
@@ -587,7 +605,22 @@ class MacosStyleTable extends RenderObjectWidget {
       ..rowDecorations = _rowDecorations
       ..configuration = createLocalImageConfiguration(context)
       ..defaultVerticalAlignment = defaultVerticalAlignment
-      ..textBaseline = textBaseline;
+      ..textBaseline = textBaseline
+      ..painter = _generatePainter(context);
+  }
+
+  MacosStylePainter _generatePainter(BuildContext context) {
+    final brightness = MacosTheme.brightnessOf(context);
+
+    Color selectedRowBackgroundColor = Color.fromRGBO(0x1f, 0x59, 0xc8, 1.0);
+
+    if (brightness != Brightness.dark) {
+      selectedRowBackgroundColor = Color.fromRGBO(0x25, 0x64, 0xd9, 1.0);
+    }
+
+    return MacosStylePainter(
+      selectedRowBackgroundColor: selectedRowBackgroundColor,
+    );
   }
 }
 

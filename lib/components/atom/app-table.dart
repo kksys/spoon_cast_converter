@@ -84,7 +84,7 @@ class AppTable extends StatefulWidget {
   final List<AppTableRow> rows;
   final AppTableSelectionType selectionType;
   final Function(List<int>)? onSelected;
-  final List<int> selectedRow;
+  final List<int> selectedRows;
 
   const AppTable({
     Key? key,
@@ -92,7 +92,7 @@ class AppTable extends StatefulWidget {
     required this.rows,
     this.selectionType = AppTableSelectionType.SINGLE_ROW_SELECTION,
     this.onSelected,
-    this.selectedRow = const [],
+    this.selectedRows = const [],
   }) : super(key: key);
 
   _AppTable createState() => _AppTable();
@@ -212,21 +212,21 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onCellClick(int row) {
-    List<int> _selectedRow = [...this.widget.selectedRow];
+    List<int> _selectedRows = [...this.widget.selectedRows];
 
     setState(() {
       if (this.widget.selectionType == AppTableSelectionType.SINGLE_ROW_SELECTION ||
           (this.widget.selectionType == AppTableSelectionType.MULTI_ROW_SELECTION &&
               !_multiSelectionKeyPressed)) {
-        _selectedRow = [row];
-      } else if (_selectedRow.contains(row)) {
-        _selectedRow = _selectedRow.where((element) => element != row).toList();
+        _selectedRows = [row];
+      } else if (_selectedRows.contains(row)) {
+        _selectedRows = _selectedRows.where((element) => element != row).toList();
       } else {
-        _selectedRow = [..._selectedRow, row]..sort((a, b) => a.compareTo(b));
+        _selectedRows = [..._selectedRows, row]..sort((a, b) => a.compareTo(b));
       }
     });
 
-    this.widget.onSelected?.call(_selectedRow);
+    this.widget.onSelected?.call(_selectedRows);
   }
 
   void _onKey(RawKeyEvent event) {
@@ -513,12 +513,6 @@ class _AppTable extends State<AppTable> {
     required int index,
     required Widget child,
   }) {
-    Color backgroundColor = Colors.transparent;
-
-    if (this.widget.selectedRow.contains(index)) {
-      backgroundColor = MacosColors.selectedControlBackgroundColor;
-    }
-
     return MacosStyleTableCell(
       child: GestureDetector(
         onTap: () => this._onCellClick(index),
@@ -530,9 +524,6 @@ class _AppTable extends State<AppTable> {
             left: TABLE_CELL_PADDING_HORIZONTAL,
             right: TABLE_CELL_PADDING_HORIZONTAL,
           ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-          ),
           child: child,
         ),
       ),
@@ -543,6 +534,7 @@ class _AppTable extends State<AppTable> {
 
   Widget _buildTable(BuildContext context) {
     return MacosStyleTable(
+      selectedRows: widget.selectedRows,
       columnWidths: [
         ..._widthForView.map((e) => e < 0 ? IntrinsicColumnWidth() : FixedColumnWidth(e)).toList(),
         FlexColumnWidth(),

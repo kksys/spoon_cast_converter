@@ -32,6 +32,7 @@ class MacosStyleRenderTable extends RenderBox {
   MacosStyleRenderTable({
     int? columns,
     int? rows,
+    List<int> selectedRows = const [],
     Map<int, TableColumnWidth>? columnWidths,
     TableColumnWidth defaultColumnWidth = const FlexColumnWidth(1.0),
     required TextDirection textDirection,
@@ -44,6 +45,7 @@ class MacosStyleRenderTable extends RenderBox {
     List<RenderBox> headers = const [],
     Function(List<double>)? changedColumnWidthCallback,
     Function(Size)? changedViewportSizeCallback,
+    required MacosStylePainter painter,
   })  : assert(columns == null || columns >= 0),
         assert(rows == null || rows >= 0),
         assert(rows == null || children == null),
@@ -51,12 +53,14 @@ class MacosStyleRenderTable extends RenderBox {
         _textDirection = textDirection,
         _columns = columns ?? (children != null && children.isNotEmpty ? children.first.length : 0),
         _rows = rows ?? 0,
+        _selectedRows = selectedRows,
         _columnWidths = columnWidths ?? HashMap<int, TableColumnWidth>(),
         _defaultColumnWidth = defaultColumnWidth,
         _border = border,
         _textBaseline = textBaseline,
         _defaultVerticalAlignment = defaultVerticalAlignment,
-        _configuration = configuration {
+        _configuration = configuration,
+        _painter = painter {
     _headers = <RenderBox?>[]..length = _columns;
     _children = <RenderBox?>[]..length = _columns * _rows;
     this.rowDecorations = rowDecorations; // must use setter to initialize box painters array
@@ -123,6 +127,13 @@ class MacosStyleRenderTable extends RenderBox {
     }
     _rows = value;
     _children.length = columns * rows;
+    markNeedsLayout();
+  }
+
+  List<int> get selectedRows => _selectedRows;
+  List<int> _selectedRows;
+  set selectedRows(List<int> value) {
+    _selectedRows = value;
     markNeedsLayout();
   }
 
@@ -234,6 +245,13 @@ class MacosStyleRenderTable extends RenderBox {
   set textBaseline(TextBaseline? value) {
     if (_textBaseline == value) return;
     _textBaseline = value;
+    markNeedsLayout();
+  }
+
+  MacosStylePainter get painter => _painter;
+  MacosStylePainter _painter;
+  set painter(MacosStylePainter value) {
+    _painter = value;
     markNeedsLayout();
   }
 
@@ -1046,5 +1064,29 @@ class MacosStyleRenderTable extends RenderBox {
       );
       context.canvas.restore();
     }
+
+    _selectedRows.where((y) => y >= 0).forEach((y) {
+      final rect = y == 0
+          ? Rect.fromLTWH(
+              offsets[y].dx + offset.dx,
+              offsets[y].dy + offset.dy + TABLE_PADDING_TOP,
+              size.width,
+              heights[y] - TABLE_PADDING_TOP,
+            )
+          : Rect.fromLTWH(
+              offsets[y].dx + offset.dx,
+              offsets[y].dy + offset.dy,
+              size.width,
+              heights[y],
+            );
+      context.canvas.save();
+      context.canvas.drawRect(
+        rect,
+        Paint()
+          ..color = _painter.selectedRowBackgroundColor
+          ..style = PaintingStyle.fill,
+      );
+      context.canvas.restore();
+    });
   }
 }

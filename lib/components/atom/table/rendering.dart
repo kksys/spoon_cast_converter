@@ -48,7 +48,7 @@ class MacosStyleRenderTable extends RenderBox {
         assert(rows == null || children == null),
         assert(headers.length != columns),
         _textDirection = textDirection,
-        _columns = columns ?? (children != null && children.isNotEmpty ? children.first.length : 0),
+        _columns = columns ?? (headers.length),
         _rows = rows ?? 0,
         _selectedRows = selectedRows,
         _columnWidths = columnWidths ?? HashMap<int, TableColumnWidth>(),

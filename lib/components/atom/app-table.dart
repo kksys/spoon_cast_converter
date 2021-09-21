@@ -435,15 +435,15 @@ class _AppTable extends State<AppTable> {
 
     if (index == 0 && this._widthForViewIncludeLast[index] < 2) {
       leftCursorRegionWidth = 0;
-      rightCursorRegionWidth = this._widthForViewIncludeLast[index];
+      rightCursorRegionWidth = max(this._widthForViewIncludeLast[index], 0);
     } else if (index == this._widthForViewIncludeLast.length - 1 &&
         this._widthForViewIncludeLast[index] < 2) {
-      leftCursorRegionWidth = this._widthForViewIncludeLast[index];
+      leftCursorRegionWidth = max(this._widthForViewIncludeLast[index], 0);
       rightCursorRegionWidth = 0;
     } else if (this._widthForViewIncludeLast[index] < 4) {
       final width = this._widthForViewIncludeLast[index] / 2;
-      leftCursorRegionWidth = width;
-      rightCursorRegionWidth = width;
+      leftCursorRegionWidth = max(width, 0);
+      rightCursorRegionWidth = max(width, 0);
     }
 
     return MacosStyleTableColumn(

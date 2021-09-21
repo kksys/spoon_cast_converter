@@ -335,6 +335,8 @@ class _AppTable extends State<AppTable> {
   }
 
   Widget _buildContainer(BuildContext context) {
+    final brightness = MacosTheme.brightnessOf(context);
+
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       if (_size != _key.currentContext?.size) {
         setState(() {
@@ -354,7 +356,9 @@ class _AppTable extends State<AppTable> {
           (Container(
             decoration: BoxDecoration(
               border: Border.all(
-                color: MacosColors.windowBackgroundColor,
+                color: (brightness != Brightness.dark)
+                    ? Color.fromRGBO(0xe6, 0xe6, 0xe6, 1.0)
+                    : Color.fromRGBO(0x47, 0x42, 0x45, 1.0),
                 width: 1.0,
               ),
             ),
@@ -396,12 +400,12 @@ class _AppTable extends State<AppTable> {
                           ? _tableViewportSize!.height
                           : (_size!.height - 2)),
                   orientation: ScrollBarOrientation.vertical,
-                  top: 1,
+                  top: TABLE_HEADER_HEIGHT + 1,
                   right: 1,
                   bottom: 1,
                   left: null,
-                  width: 3,
-                  height: _size!.height - 2,
+                  width: 6,
+                  height: _size!.height - 2 - TABLE_HEADER_HEIGHT,
                 ),
                 ScrollBar(
                   globalKey: _horizontalScrollBarKey,
@@ -416,8 +420,8 @@ class _AppTable extends State<AppTable> {
                   bottom: 1,
                   left: 1,
                   width: _size!.width - 2,
-                  height: 3,
-                )
+                  height: 6,
+                ),
               ],
             ),
           ))
@@ -467,10 +471,10 @@ class _AppTable extends State<AppTable> {
                   right: TABLE_HEADER_PADDING_HORIZONTAL,
                 ),
                 decoration: BoxDecoration(
-                  color: MacosColors.textBackgroundColor,
+                  color: Colors.transparent,
                   border: Border(
                     bottom: BorderSide(
-                      color: MacosColors.windowBackgroundColor,
+                      color: Colors.transparent,
                       width: 1.0,
                     ),
                   ),
@@ -481,9 +485,11 @@ class _AppTable extends State<AppTable> {
                 Positioned(
                   left: 0,
                   width: leftCursorRegionWidth,
-                  height: 27,
+                  height: TABLE_HEADER_HEIGHT,
                   child: MouseRegion(
-                    cursor: SystemMouseCursors.resizeLeftRight,
+                    cursor: (index < this.widget.columns.length)
+                        ? SystemMouseCursors.resizeLeftRight
+                        : SystemMouseCursors.resizeRight,
                     child: Container(
                       width: leftCursorRegionWidth,
                     ),
@@ -493,9 +499,11 @@ class _AppTable extends State<AppTable> {
                 Positioned(
                   right: 0,
                   width: rightCursorRegionWidth,
-                  height: 27,
+                  height: TABLE_HEADER_HEIGHT,
                   child: MouseRegion(
-                    cursor: SystemMouseCursors.resizeLeftRight,
+                    cursor: (index < this.widget.columns.length - 1)
+                        ? SystemMouseCursors.resizeLeftRight
+                        : SystemMouseCursors.resizeRight,
                     child: Container(
                       width: rightCursorRegionWidth,
                     ),

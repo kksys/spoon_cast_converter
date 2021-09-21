@@ -270,9 +270,19 @@ class _ScrollBarState extends State<ScrollBar> {
 
 @immutable
 class MacosStylePainter {
+  final Color headerBackgroundColor;
+  final Color headerDividerColor;
+  final Color headerBottomColor;
+  final Color evenRowBackgroundColor;
+  final Color oddRowBackgroundColor;
   final Color selectedRowBackgroundColor;
 
   const MacosStylePainter({
+    required this.headerBackgroundColor,
+    required this.headerDividerColor,
+    required this.headerBottomColor,
+    required this.evenRowBackgroundColor,
+    required this.oddRowBackgroundColor,
     required this.selectedRowBackgroundColor,
   });
 }
@@ -612,13 +622,28 @@ class MacosStyleTable extends RenderObjectWidget {
   MacosStylePainter _generatePainter(BuildContext context) {
     final brightness = MacosTheme.brightnessOf(context);
 
+    Color headerBackgroundColor = Color.fromRGBO(0x26, 0x20, 0x23, 1.0);
+    Color headerDividerColor = Color.fromRGBO(0x3a, 0x36, 0x39, 1.0);
+    Color headerBottomColor = Color.fromRGBO(0x47, 0x42, 0x45, 1.0);
+    Color evenRowBackgroundColor = Color.fromRGBO(0x26, 0x20, 0x23, 1.0);
+    Color oddRowBackgroundColor = Color.fromRGBO(0x30, 0x2a, 0x2d, 1.0);
     Color selectedRowBackgroundColor = Color.fromRGBO(0x1f, 0x59, 0xc8, 1.0);
 
     if (brightness != Brightness.dark) {
+      headerBackgroundColor = Color.fromRGBO(0xff, 0xff, 0xff, 1.0);
+      headerDividerColor = Color.fromRGBO(0xe6, 0xe6, 0xe6, 1.0);
+      headerBottomColor = Color.fromRGBO(0xe6, 0xe6, 0xe6, 1.0);
+      evenRowBackgroundColor = Color.fromRGBO(0xff, 0xff, 0xff, 1.0);
+      oddRowBackgroundColor = Color.fromRGBO(0xf4, 0xf5, 0xf5, 1.0);
       selectedRowBackgroundColor = Color.fromRGBO(0x25, 0x64, 0xd9, 1.0);
     }
 
     return MacosStylePainter(
+      headerBackgroundColor: headerBackgroundColor,
+      headerDividerColor: headerDividerColor,
+      headerBottomColor: headerBottomColor,
+      evenRowBackgroundColor: evenRowBackgroundColor,
+      oddRowBackgroundColor: oddRowBackgroundColor,
       selectedRowBackgroundColor: selectedRowBackgroundColor,
     );
   }

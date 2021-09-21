@@ -7,9 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 
-// Package imports:
-import 'package:macos_ui/macos_ui.dart';
-
 // Project imports:
 import 'package:spoon_cast_converter/components/atom/table/constants.dart';
 import 'package:spoon_cast_converter/components/atom/table/widget.dart';
@@ -947,6 +944,35 @@ class MacosStyleRenderTable extends RenderBox {
       if (header != null) {
         final relativeOffset = this.calculateHeaderOffset();
         final BoxParentData headerParentData = header.parentData! as BoxParentData;
+
+        context.canvas.save();
+        context.canvas.drawRect(
+          Rect.fromLTWH(
+            headerParentData.offset.dx + offset.dx,
+            relativeOffset.dy + offset.dy,
+            header.size.width,
+            header.size.height,
+          ),
+          Paint()
+            ..color = _painter.headerBackgroundColor
+            ..style = PaintingStyle.fill,
+        );
+        context.canvas.drawLine(
+          Offset(
+            headerParentData.offset.dx + offset.dx,
+            relativeOffset.dy + offset.dy + header.size.height,
+          ),
+          Offset(
+            headerParentData.offset.dx + offset.dx + header.size.width,
+            relativeOffset.dy + offset.dy + header.size.height,
+          ),
+          Paint()
+            ..color = _painter.headerBottomColor
+            ..strokeWidth = 1
+            ..style = PaintingStyle.fill,
+        );
+        context.canvas.restore();
+
         context.paintChild(
             header, Offset(headerParentData.offset.dx + offset.dx, relativeOffset.dy + offset.dy));
       }
@@ -960,7 +986,7 @@ class MacosStyleRenderTable extends RenderBox {
           Offset(headerParentData.offset.dx + offset.dx, relativeOffset.dy + offset.dy + 3),
           Offset(headerParentData.offset.dx + offset.dx, relativeOffset.dy + offset.dy + 23),
           Paint()
-            ..color = MacosColors.windowBackgroundColor
+            ..color = _painter.headerDividerColor
             ..strokeWidth = 2
             ..style = PaintingStyle.fill,
         );
@@ -1029,11 +1055,22 @@ class MacosStyleRenderTable extends RenderBox {
       }
     }
 
-    while (currentOffset < constraints.minHeight) {
-      offsets.add(Offset(0, currentOffset));
-      heights.add(TABLE_MINIMUM_HEIGHT);
+    if (rows == 0) {
+      final height = math.min(constraints.minHeight - currentOffset, TABLE_MINIMUM_HEIGHT);
 
-      currentOffset += TABLE_MINIMUM_HEIGHT;
+      offsets.add(Offset(0, TABLE_HEADER_HEIGHT));
+      heights.add(TABLE_PADDING_TOP + height);
+
+      currentOffset += TABLE_HEADER_HEIGHT + TABLE_PADDING_TOP + height;
+    }
+
+    while (currentOffset < constraints.minHeight) {
+      final height = math.min(constraints.minHeight - currentOffset, TABLE_MINIMUM_HEIGHT);
+
+      offsets.add(Offset(0, currentOffset));
+      heights.add(height);
+
+      currentOffset += height;
     }
 
     for (int y = 0; y < offsets.length; y += 1) {
@@ -1041,9 +1078,7 @@ class MacosStyleRenderTable extends RenderBox {
       context.canvas.drawRect(
         Rect.fromLTWH(offsets[y].dx + offset.dx, offsets[y].dy + offset.dy, size.width, heights[y]),
         Paint()
-          ..color = (y % 2 > 0)
-              ? MacosColors.alternatingContentBackgroundColor
-              : MacosColors.textBackgroundColor
+          ..color = (y % 2 > 0) ? _painter.oddRowBackgroundColor : _painter.evenRowBackgroundColor
           ..style = PaintingStyle.fill,
       );
       context.canvas.restore();

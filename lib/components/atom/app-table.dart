@@ -179,12 +179,11 @@ class _AppTable extends State<AppTable> {
         final double width = max(_currentPos! - _mouseDiffPos! + 2, 0);
 
         if (_targetIndex == this._widthForViewIncludeLast.length - 2) {
-          final lastWidth = _size!.width -
-              2 -
-              this
-                  ._widthForViewIncludeLast
-                  .sublist(0, _targetIndex)
-                  .reduce((value, element) => value + element);
+          final widthListsExceptLast = this._widthForViewIncludeLast.sublist(0, _targetIndex);
+          final totalWidthExceptLast = widthListsExceptLast.length > 0
+              ? widthListsExceptLast.reduce((value, element) => value + element)
+              : 0;
+          final lastWidth = _size!.width - 2 - totalWidthExceptLast;
           _widthForViewIncludeLast[_targetIndex! + 1] = lastWidth;
 
           _widthForViewIncludeLast.setRange(_targetIndex!, _targetIndex! + 2, [width, lastWidth]);

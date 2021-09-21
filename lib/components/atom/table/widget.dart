@@ -572,7 +572,7 @@ class MacosStyleTable extends RenderObjectWidget {
   MacosStyleRenderTable createRenderObject(BuildContext context) {
     assert(debugCheckHasDirectionality(context));
     return MacosStyleRenderTable(
-      columns: children.isNotEmpty ? children[0].children!.length : 0,
+      columns: headers.length,
       rows: children.length,
       selectedRows: selectedRows,
       columnWidths: columnWidths,
@@ -592,7 +592,7 @@ class MacosStyleTable extends RenderObjectWidget {
   @override
   void updateRenderObject(BuildContext context, MacosStyleRenderTable renderObject) {
     assert(debugCheckHasDirectionality(context));
-    assert(renderObject.columns == (children.isNotEmpty ? children[0].children!.length : 0));
+    assert(renderObject.columns == headers.length);
     assert(renderObject.rows == children.length);
     renderObject
       ..setChangedColumnWidthCallback(this.onChangeColumnWidth)

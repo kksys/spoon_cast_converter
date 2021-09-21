@@ -274,9 +274,9 @@ class MacosStyleRenderTable extends RenderBox {
     // consider the case of a newly empty table
     if (columns == 0 || cells.isEmpty) {
       assert(cells.isEmpty);
-      _columns = columns;
       if (_children.isEmpty) {
         assert(_rows == 0);
+        markNeedsLayout();
         return;
       }
       for (final RenderBox? oldChild in _children) {
@@ -690,12 +690,9 @@ class MacosStyleRenderTable extends RenderBox {
 
   @override
   Size computeDryLayout(BoxConstraints constraints) {
-    if (rows * columns == 0) {
-      return constraints.constrain(Size.zero);
-    }
     final List<double> widths = _computeColumnWidths(constraints);
     final double tableWidth = widths.fold(0.0, (double a, double b) => a + b);
-    double rowTop = 0.0;
+    double rowTop = TABLE_HEADER_HEIGHT;
     for (int y = 0; y < rows; y += 1) {
       double rowHeight = 0.0;
       for (int x = 0; x < columns; x += 1) {
@@ -732,10 +729,6 @@ class MacosStyleRenderTable extends RenderBox {
     final int rows = this.rows;
     final int columns = this.columns;
     assert(_children.length == rows * columns);
-    if (rows * columns == 0) {
-      size = constraints.constrain(Size.zero);
-      return;
-    }
     final List<double> widths = _computeColumnWidths(constraints);
     final List<double> positions = List<double>.filled(columns, 0.0, growable: false);
     final double tableWidth;
@@ -756,7 +749,7 @@ class MacosStyleRenderTable extends RenderBox {
     _rowTops.clear();
     _baselineDistance = null;
     // then, lay out each row
-    const double headerHeight = 27;
+    const double headerHeight = TABLE_HEADER_HEIGHT;
     double rowTop = headerHeight;
 
     for (int x = 0; x < columns; x += 1) {
@@ -906,15 +899,6 @@ class MacosStyleRenderTable extends RenderBox {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    assert(_children.length == rows * columns);
-    if (rows * columns == 0) {
-      if (border != null) {
-        final Rect borderRect = Rect.fromLTWH(offset.dx, offset.dy, size.width, 0.0);
-        border!
-            .paint(context.canvas, borderRect, rows: const <double>[], columns: const <double>[]);
-      }
-      return;
-    }
     assert(_rowTops.length == rows + 1);
     if (_rowDecorations != null) {
       assert(_rowDecorations!.length == _rowDecorationPainters!.length);

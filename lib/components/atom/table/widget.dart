@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:macos_ui/macos_ui.dart';
+import 'package:rxdart/rxdart.dart';
 
 // Project imports:
 import 'package:spoon_cast_converter/components/atom/table/rendering.dart';
@@ -65,7 +66,43 @@ class ScrollBar extends StatefulWidget {
   _ScrollBarState createState() => _ScrollBarState();
 }
 
-class _ScrollBarState extends State<ScrollBar> {
+enum _FadeInOutActionType {
+  FADE_IN,
+  FADE_OUT,
+  NO_OP_FADE_IN,
+  NO_OP_FADE_OUT,
+}
+
+enum _FadeInOutActionReason {
+  MOUSE_ENTER,
+  MOUSE_EXIT,
+  SCROLLED_VIEW,
+}
+
+class _FadeInOutAction {
+  final _FadeInOutActionType type;
+  final _FadeInOutActionReason reason;
+
+  const _FadeInOutAction({
+    required this.type,
+    required this.reason,
+  });
+
+  @override
+  String toString() {
+    return 'type: $type, reason: $reason';
+  }
+
+  @override
+  operator ==(Object right) {
+    return this.toString() == right.toString();
+  }
+
+  @override
+  int get hashCode => this.toString().hashCode;
+}
+
+class _ScrollBarState extends State<ScrollBar> with SingleTickerProviderStateMixin {
   double position = -1;
   double downPos = 0;
   Timer? scrollTimer;
@@ -77,10 +114,100 @@ class _ScrollBarState extends State<ScrollBar> {
 
   late double handleSize;
 
+  late AnimationController _animationController;
+  late Animation<double> _currentAnimation;
+
+  late StreamController<_FadeInOutAction> _fadeInOutPublisher;
+  late List<StreamSubscription> _subscriptions = [];
+
+  Stream<_FadeInOutAction> _fadeInStream(_FadeInOutAction action) {
+    if (action.type == _FadeInOutActionType.FADE_IN) {
+      _dispatchFadeInAnimation();
+
+      _fadeInOutPublisher.add(
+        _FadeInOutAction(
+          type: _FadeInOutActionType.NO_OP_FADE_IN,
+          reason: action.reason,
+        ),
+      );
+
+      if (action.reason == _FadeInOutActionReason.SCROLLED_VIEW) {
+        _fadeInOutPublisher.add(
+          _FadeInOutAction(
+            type: _FadeInOutActionType.FADE_OUT,
+            reason: _FadeInOutActionReason.SCROLLED_VIEW,
+          ),
+        );
+      }
+
+      return Stream.empty();
+    }
+
+    return Stream.value(action);
+  }
+
+  Stream<_FadeInOutAction> _delayFadeOutStream(_FadeInOutAction action) {
+    return (action.type == _FadeInOutActionType.FADE_OUT)
+        ? Stream.value(action).delay(Duration(seconds: 2))
+        : Stream.value(action);
+  }
+
+  Stream<_FadeInOutAction> _fadeOutStream(_FadeInOutAction action) {
+    if (action.type == _FadeInOutActionType.FADE_OUT) {
+      _fadeInOutPublisher.add(_FadeInOutAction(
+        type: _FadeInOutActionType.NO_OP_FADE_OUT,
+        reason: action.reason,
+      ));
+
+      _dispatchFadeOutAnimation();
+
+      return Stream.empty();
+    }
+
+    return Stream.value(action);
+  }
+
   @override
   void initState() {
     super.initState();
     handleSize = widget.handleSize;
+
+    _animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    _currentAnimation = Tween(begin: 0.0, end: 1.0).animate(_animationController);
+
+    _fadeInOutPublisher = PublishSubject<_FadeInOutAction>();
+    _subscriptions = [
+      _fadeInOutPublisher.stream
+          .where((event) =>
+              event.type == _FadeInOutActionType.FADE_IN ||
+              event.type == _FadeInOutActionType.NO_OP_FADE_OUT ||
+              (event.type == _FadeInOutActionType.FADE_OUT &&
+                  event.reason == _FadeInOutActionReason.MOUSE_EXIT))
+          .distinct((action1, action2) {
+            if (action2.type == _FadeInOutActionType.NO_OP_FADE_OUT) {
+              return false;
+            }
+
+            return action1 == action2;
+          })
+          .switchMap<_FadeInOutAction>(_fadeInStream)
+          .listen((event) {}),
+      _fadeInOutPublisher.stream
+          .where((event) =>
+              event.type == _FadeInOutActionType.FADE_OUT ||
+              event.type == _FadeInOutActionType.NO_OP_FADE_IN)
+          .switchMap<_FadeInOutAction>(_delayFadeOutStream)
+          .switchMap<_FadeInOutAction>(_fadeOutStream)
+          .listen((event) {}),
+    ];
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _animationController.dispose();
+    _subscriptions.forEach((element) => element.cancel());
   }
 
   void updateScroll(double delta, {bool updateGrid = true}) {
@@ -103,6 +230,12 @@ class _ScrollBarState extends State<ScrollBar> {
 
   void updatePosition(double position) {
     this.position = position;
+    _fadeInOutPublisher.add(
+      _FadeInOutAction(
+        type: _FadeInOutActionType.FADE_IN,
+        reason: _FadeInOutActionReason.SCROLLED_VIEW,
+      ),
+    );
   }
 
   @override
@@ -115,8 +248,8 @@ class _ScrollBarState extends State<ScrollBar> {
       left: widget.left,
       right: widget.right,
       child: SizedBox(
-        width: widget.width,
-        height: widget.height,
+        width: widget.width * ((tap2 || entered) ? 2 : 1),
+        height: widget.height * ((tap2 || entered) ? 2 : 1),
         child: LayoutBuilder(
           builder: (context, box) {
             double handleHeight = 0;
@@ -126,27 +259,40 @@ class _ScrollBarState extends State<ScrollBar> {
             scrollFactor = 1;
             final offset = 20;
             late double buildSize;
+            BorderRadius borderRadius;
 
             if (isVertical) {
               buildSize = box.maxHeight;
               defaultHandleHeight = widget.handleSize * buildSize;
-              handleWidth = box.maxWidth;
+              handleWidth = box.maxWidth * ((tap2 || entered) ? 2 : 1);
 
               handleHeight = max(30, defaultHandleHeight);
               scrollFactor = (buildSize == handleHeight)
                   ? 1
                   : (buildSize - defaultHandleHeight) / (buildSize - handleHeight);
               handleSize *= handleHeight / defaultHandleHeight;
+
+              borderRadius = BorderRadius.all(
+                (tap2 || entered)
+                    ? Radius.elliptical(handleWidth, handleWidth * 3)
+                    : Radius.circular(handleWidth / 2),
+              );
             } else {
               buildSize = box.maxWidth;
               defaultHandleWidth = widget.handleSize * buildSize;
-              handleHeight = box.maxHeight;
+              handleHeight = box.maxHeight * ((tap2 || entered) ? 2 : 1);
 
               handleWidth = max(30, defaultHandleWidth);
               scrollFactor = (buildSize == handleWidth)
                   ? 1
                   : (buildSize - defaultHandleWidth) / (buildSize - handleWidth);
               handleSize *= handleWidth / defaultHandleWidth;
+
+              borderRadius = BorderRadius.all(
+                (tap2 || entered)
+                    ? Radius.elliptical(handleHeight * 3, handleHeight)
+                    : Radius.circular(handleHeight / 2),
+              );
             }
 
             if (_lastBuildSize != 0 && buildSize > _lastBuildSize) {
@@ -167,11 +313,7 @@ class _ScrollBarState extends State<ScrollBar> {
               return box.maxWidth;
             }
 
-            if (tap2 || entered) {
-              handleColor = Colors.grey;
-            } else {
-              handleColor = Colors.white;
-            }
+            handleColor = Colors.grey;
 
             return Listener(
               onPointerDown: (details) {
@@ -201,19 +343,38 @@ class _ScrollBarState extends State<ScrollBar> {
                   scrollTimer = null;
                 }
               },
-              child: Container(
-                color: Colors.transparent,
-                child: Stack(
-                  children: [
-                    Positioned(
+              child: MouseRegion(
+                onEnter: (details) {
+                  entered = true;
+                  update();
+                  _fadeInOutPublisher.add(
+                    _FadeInOutAction(
+                      type: _FadeInOutActionType.FADE_IN,
+                      reason: _FadeInOutActionReason.MOUSE_ENTER,
+                    ),
+                  );
+                },
+                onExit: (details) {
+                  if (tap2) return;
+                  entered = false;
+                  update();
+                  _fadeInOutPublisher.add(
+                    _FadeInOutAction(
+                      type: _FadeInOutActionType.FADE_OUT,
+                      reason: _FadeInOutActionReason.MOUSE_EXIT,
+                    ),
+                  );
+                },
+                child: Container(
+                  color: Colors.transparent,
+                  child: Stack(
+                    children: [
+                      Positioned(
                         top: isVertical ? (position) * (_getBoxSize(box) - handleHeight) : null,
                         left: isVertical
                             ? 0.5 * (box.maxWidth - handleWidth)
                             : (position) * (_getBoxSize(box) - handleWidth),
                         bottom: isVertical ? null : 0.5 * (box.maxHeight - handleHeight),
-                        // top: null,
-                        // left: null,
-                        // bottom: null,
                         child: SizedBox(
                           width: handleWidth,
                           height: handleHeight,
@@ -224,7 +385,6 @@ class _ScrollBarState extends State<ScrollBar> {
                               update();
                             },
                             onPointerUp: (details) {
-                              // position += delta;
                               tap2 = false;
                               entered = false;
                               update();
@@ -241,27 +401,20 @@ class _ScrollBarState extends State<ScrollBar> {
                               downPos = currentPos;
                               widget.onUpdate(position * scrollFactor);
                             },
-                            child: MouseRegion(
-                              onEnter: (details) {
-                                entered = true;
-                                update();
-                              },
-                              onExit: (details) {
-                                if (tap2) return;
-                                entered = false;
-                                update();
-                              },
+                            child: FadeTransition(
+                              opacity: _currentAnimation,
                               child: Container(
-                                // color: Colors.grey,
                                 decoration: BoxDecoration(
-                                  color: handleColor,
-                                  borderRadius: BorderRadius.circular(10),
+                                  color: handleColor.withOpacity(0.8),
+                                  borderRadius: borderRadius,
                                 ),
                               ),
                             ),
                           ),
-                        )),
-                  ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -269,6 +422,28 @@ class _ScrollBarState extends State<ScrollBar> {
         ),
       ),
     );
+  }
+
+  void _dispatchFadeInAnimation() {
+    Animation prevAnimation = _currentAnimation;
+    _currentAnimation = Tween<double>(
+      begin: prevAnimation.value,
+      end: 1.0,
+    ).animate(_animationController);
+    update();
+    _animationController.reset();
+    _animationController.forward();
+  }
+
+  void _dispatchFadeOutAnimation() {
+    Animation prevAnimation = _currentAnimation;
+    _currentAnimation = Tween<double>(
+      begin: prevAnimation.value,
+      end: 0.0,
+    ).animate(_animationController);
+    update();
+    _animationController.reset();
+    _animationController.forward();
   }
 }
 

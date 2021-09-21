@@ -122,6 +122,14 @@ class _BottomPanelState extends State<BottomPanel> {
       result += current / duration * 100 / numberOfTask;
     }
 
+    // normalize the parcentage value between 0 and 100
+    if (result < 0) {
+      result = 0;
+    }
+    if (result > 100) {
+      result = 100;
+    }
+
     return result;
   }
 

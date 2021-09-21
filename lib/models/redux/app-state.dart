@@ -139,14 +139,24 @@ class ModalInfo {
   }
 }
 
+enum ConvertState {
+  ADDED,
+  WAITING,
+  CONVERTING,
+  SUCCESS,
+  ERROR,
+}
+
 @immutable
 class ConvertItem {
   final String? id;
+  final ConvertState state;
   final String inputFilePath;
   final String? outputFilePath;
 
   const ConvertItem({
     this.id,
+    required this.state,
     required this.inputFilePath,
     this.outputFilePath,
   });
@@ -154,6 +164,7 @@ class ConvertItem {
   Map toMap() {
     return {
       'id': this.id,
+      'state': this.state,
       'inputFilePath': this.inputFilePath,
       'outputFilePath': this.outputFilePath,
     };
@@ -162,6 +173,7 @@ class ConvertItem {
   static ConvertItem fromMap(Map obj) {
     return ConvertItem(
       id: obj['id'],
+      state: obj['state'],
       inputFilePath: obj['inputFilePath'],
       outputFilePath: obj['outputFilePath'],
     );

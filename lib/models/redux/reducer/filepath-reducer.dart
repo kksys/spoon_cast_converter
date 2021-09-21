@@ -38,6 +38,7 @@ AppState _addConvertItemReducer(
         ...state.convertFileList,
         ConvertItem(
           id: newId,
+          state: action.convertItem.state,
           inputFilePath: action.convertItem.inputFilePath,
           outputFilePath: action.convertItem.outputFilePath,
         ),

@@ -104,6 +104,7 @@ class _ViewModel {
         store.dispatch(UpdateConvertItemAction(
           convertItem: ConvertItem(
             id: currentItem.id,
+            state: currentItem.state,
             inputFilePath: currentItem.inputFilePath,
             outputFilePath: outputFilePath,
           ),

@@ -551,9 +551,9 @@ class _AppTable extends State<AppTable> {
       ].asMap(),
       onChangeColumnWidth: (widthList) {
         if (!listEquals(_widthForViewIncludeLast, widthList)) {
-        final newWidthList = widthList.sublist(0, this.widget.columns.length);
-        _widthForCalculate = newWidthList;
-        _widthForViewIncludeLast = widthList;
+          final newWidthList = widthList.sublist(0, this.widget.columns.length);
+          _widthForCalculate = newWidthList;
+          _widthForViewIncludeLast = widthList;
           setState(() {});
         }
       },

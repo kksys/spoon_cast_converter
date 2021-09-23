@@ -1,15 +1,17 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 // Package imports:
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:macos_ui/macos_ui.dart';
+import 'package:path/path.dart' as path;
 import 'package:redux/redux.dart';
 
 // Project imports:
-import 'package:spoon_cast_converter/components/atom/app-list-item.dart';
+import 'package:spoon_cast_converter/components/atom/app-table.dart';
 import 'package:spoon_cast_converter/components/atom/app-text.dart';
 import 'package:spoon_cast_converter/components/templates/app-modal-dialog.dart';
 import 'package:spoon_cast_converter/conf.dart';
@@ -25,6 +27,13 @@ class TopPanel extends StatefulWidget {
 
 class _TopPanelState extends State<TopPanel> {
   final padding = 6.0;
+  final _tableViewKey = GlobalKey();
+  Size? _tableViewSize;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _addFile(_ViewModel viewModel) async {
     var result = await openFile();
@@ -40,6 +49,7 @@ class _TopPanelState extends State<TopPanel> {
     } else {
       viewModel.addInputFilePathList(
         ConvertItem(
+          state: ConvertState.ADDED,
           inputFilePath: result.path,
         ),
       );
@@ -75,9 +85,39 @@ class _TopPanelState extends State<TopPanel> {
     }
   }
 
+  String getConvertStatusString(ConvertState state) {
+    final localizations = AppLocalizations.of(context);
+    assert(localizations != null);
+
+    if (localizations == null) {
+      throw FlutterError('AppLocalization instance is null.');
+    }
+
+    switch (state) {
+      case ConvertState.ADDED:
+        return localizations.appConvertStatusAdded;
+      case ConvertState.WAITING:
+        return localizations.appConvertStatusWaiting;
+      case ConvertState.CONVERTING:
+        return localizations.appConvertStatusConverting;
+      case ConvertState.SUCCESS:
+        return localizations.appConvertStatusSuccess;
+      case ConvertState.ERROR:
+        return localizations.appConvertStatusFailed;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      if (_tableViewSize != _tableViewKey.currentContext?.size) {
+        _tableViewSize = _tableViewKey.currentContext?.size;
+        print(_tableViewSize);
+        setState(() {});
+      }
+    });
 
     return new StoreConnector<AppState, _ViewModel>(
       converter: _ViewModel.fromStore,
@@ -102,26 +142,77 @@ class _TopPanelState extends State<TopPanel> {
                         ),
                       )
                     : null,
-                child: GestureDetector(
-                  onTap: () {
-                    _selectItem(viewModel, -1);
+                child: LayoutBuilder(
+                  builder: (context2, constraints) {
+                    return Stack(
+                      children: [
+                        Container(
+                          key: _tableViewKey,
+                          width: double.infinity,
+                          height: double.infinity,
+                        ),
+                        if (_tableViewSize != null)
+                          (Container(
+                            width: _tableViewSize!.width,
+                            height: _tableViewSize!.height,
+                            child: AppTable(
+                              selectedRows: [viewModel.selectedIndex],
+                              onSelected: (list) =>
+                                  _selectItem(viewModel, list.length > 0 ? list.first : -1),
+                              columns: [
+                                AppTableColumn(
+                                  width: 100.0,
+                                  child: AppText(
+                                    localizations.convertItemListStatusHeader,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                AppTableColumn(
+                                  width: 200.0,
+                                  child: AppText(
+                                    localizations.convertItemListFileNameHeader,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                AppTableColumn(
+                                  width: 300.0,
+                                  child: AppText(
+                                    localizations.convertItemListFileDirectoryHeader,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                              rows: viewModel.convertFileList
+                                  .map(
+                                    (e) => AppTableRow(
+                                      children: [
+                                        AppTableCell(
+                                          child: AppText(
+                                            getConvertStatusString(e.state),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        AppTableCell(
+                                          child: AppText(
+                                            path.basename(e.inputFilePath),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        AppTableCell(
+                                          child: AppText(
+                                            path.dirname(e.inputFilePath),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                          )),
+                      ],
+                    );
                   },
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: viewModel.convertFileList.length,
-                    itemBuilder: (_, index) {
-                      return AppListItem(
-                        onTap: () => _selectItem(viewModel, index),
-                        selected: viewModel.selectedIndex == index,
-                        build: () {
-                          return AppText(
-                            viewModel.convertFileList[index].inputFilePath,
-                            overflow: TextOverflow.ellipsis,
-                          );
-                        },
-                      );
-                    },
-                  ),
                 ),
               ),
             ),

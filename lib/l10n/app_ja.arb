@@ -40,6 +40,16 @@
   "appDeleteButton": "削除",
   "appStartToConvertButton": "変換開始",
 
+  "convertItemListStatusHeader": "状況",
+  "convertItemListFileNameHeader": "ファイル名",
+  "convertItemListFileDirectoryHeader": "フォルダ",
+
+  "appConvertStatusAdded": "追加済み",
+  "appConvertStatusWaiting": "変換待ち…",
+  "appConvertStatusConverting": "変換中…",
+  "appConvertStatusSuccess": "変換完了",
+  "appConvertStatusFailed": "変換失敗",
+
   "appDurationLabel": "再生時間:",
   "appSampleRatesLabel": "サンプリング周波数:",
   "appBitRatesLabel": "ビットレート:",

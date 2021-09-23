@@ -132,6 +132,9 @@ void Function(
   return (store, action, next) async {
     try {
       print('_convertFile');
+
+      _updateConvertingState(store);
+
       ReceivePort receivePort = ReceivePort();
       ReceivePort receivePortForCallback = ReceivePort();
       ConvertFileSpawnParams params = ConvertFileSpawnParams(
@@ -160,8 +163,12 @@ void Function(
       if (result['status'] != 'SUCCESS') {
         throw result['error'];
       }
+
+      _updateSuccessState(store);
     } catch (e) {
       print(e);
+
+      _updateErrorState(store);
     }
 
     store.dispatch(ContinueNextConvertSequenceAction());
@@ -175,6 +182,7 @@ void Function(
 ) _startConvertSequence() {
   return (store, action, next) async {
     print('_startConvertSequence');
+    _updateAllWaitingState(store);
     store.dispatch(ContinueNextConvertSequenceAction());
   };
 }
@@ -236,4 +244,53 @@ void Function(
       ));
     }
   };
+}
+
+void _updateAllWaitingState(Store<AppState> store) {
+  final convertItemList = store.state.convertFileList
+      .map(
+        (element) => ConvertItem.fromMap({
+          ...element.toMap(),
+          'state': ConvertState.WAITING,
+        }),
+      )
+      .toList();
+  convertItemList.forEach((element) {
+    store.dispatch(UpdateConvertItemAction(
+      convertItem: element,
+    ));
+  });
+}
+
+void _updateConvertingState(Store<AppState> store) {
+  final previousItem = store.state.convertFileList[store.state.convertingIndex];
+  final newItem = ConvertItem.fromMap({
+    ...previousItem.toMap(),
+    'state': ConvertState.CONVERTING,
+  });
+  store.dispatch(UpdateConvertItemAction(
+    convertItem: newItem,
+  ));
+}
+
+void _updateSuccessState(Store<AppState> store) {
+  final previousItem = store.state.convertFileList[store.state.convertingIndex];
+  final newItem = ConvertItem.fromMap({
+    ...previousItem.toMap(),
+    'state': ConvertState.SUCCESS,
+  });
+  store.dispatch(UpdateConvertItemAction(
+    convertItem: newItem,
+  ));
+}
+
+void _updateErrorState(Store<AppState> store) {
+  final previousItem = store.state.convertFileList[store.state.convertingIndex];
+  final newItem = ConvertItem.fromMap({
+    ...previousItem.toMap(),
+    'state': ConvertState.ERROR,
+  });
+  store.dispatch(UpdateConvertItemAction(
+    convertItem: newItem,
+  ));
 }

@@ -151,6 +151,46 @@
     "description": "Start to convert"
   },
 
+  "convertItemListStatusHeader": "Status",
+  "@convertItemListStatusHeader": {
+    "description": "Status"
+  },
+
+  "convertItemListFileNameHeader": "File name",
+  "@convertItemListFileNameHeader": {
+    "description": "File name"
+  },
+
+  "convertItemListFileDirectoryHeader": "Folder",
+  "@convertItemListFileDirectoryHeader": {
+    "description": "Folder"
+  },
+
+  "appConvertStatusAdded": "File is added",
+  "@appConvertStatusAdded": {
+    "description": "File is added"
+  },
+
+  "appConvertStatusWaiting": "Waiting for converting…",
+  "@appConvertStatusWaiting": {
+    "description": "Waiting for converting…"
+  },
+
+  "appConvertStatusConverting": "Converting…",
+  "@appConvertStatusConverting": {
+    "description": "Converting…"
+  },
+
+  "appConvertStatusSuccess": "Successfully to convert",
+  "@appConvertStatusSuccess": {
+    "description": "Successfully to convert"
+  },
+
+  "appConvertStatusFailed": "Failed to convert",
+  "@appConvertStatusFailed": {
+    "description": "Failed to convert"
+  },
+
   "appDurationLabel": "Duration:",
   "@appDurationLabel": {
     "description": "Duration:"

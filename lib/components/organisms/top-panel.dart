@@ -86,17 +86,24 @@ class _TopPanelState extends State<TopPanel> {
   }
 
   String getConvertStatusString(ConvertState state) {
+    final localizations = AppLocalizations.of(context);
+    assert(localizations != null);
+
+    if (localizations == null) {
+      throw FlutterError('AppLocalization instance is null.');
+    }
+
     switch (state) {
       case ConvertState.ADDED:
-        return 'ADDED';
+        return localizations.appConvertStatusAdded;
       case ConvertState.WAITING:
-        return 'WAITING';
+        return localizations.appConvertStatusWaiting;
       case ConvertState.CONVERTING:
-        return 'CONVERTING';
+        return localizations.appConvertStatusConverting;
       case ConvertState.SUCCESS:
-        return 'SUCCESS';
+        return localizations.appConvertStatusSuccess;
       case ConvertState.ERROR:
-        return 'ERROR';
+        return localizations.appConvertStatusFailed;
     }
   }
 
@@ -156,21 +163,21 @@ class _TopPanelState extends State<TopPanel> {
                                 AppTableColumn(
                                   width: 100.0,
                                   child: AppText(
-                                    'Status',
+                                    localizations.convertItemListStatusHeader,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 AppTableColumn(
                                   width: 200.0,
                                   child: AppText(
-                                    'File Name',
+                                    localizations.convertItemListFileNameHeader,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 AppTableColumn(
                                   width: 300.0,
                                   child: AppText(
-                                    'File Directory',
+                                    localizations.convertItemListFileDirectoryHeader,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),

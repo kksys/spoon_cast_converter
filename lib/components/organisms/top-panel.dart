@@ -156,6 +156,7 @@ class _TopPanelState extends State<TopPanel> {
                             width: _tableViewSize!.width,
                             height: _tableViewSize!.height,
                             child: AppTable(
+                              disabled: viewModel.convertingIndex >= 0,
                               selectedRows: [viewModel.selectedIndex],
                               onSelected: (list) =>
                                   _selectItem(viewModel, list.length > 0 ? list.first : -1),

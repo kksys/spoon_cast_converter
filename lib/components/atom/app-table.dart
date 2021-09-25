@@ -81,6 +81,7 @@ enum AppTableSelectionType {
 }
 
 class AppTable extends StatefulWidget {
+  final bool disabled;
   final List<AppTableColumn> columns;
   final List<AppTableRow> rows;
   final AppTableSelectionType selectionType;
@@ -89,6 +90,7 @@ class AppTable extends StatefulWidget {
 
   const AppTable({
     Key? key,
+    this.disabled = false,
     required this.columns,
     required this.rows,
     this.selectionType = AppTableSelectionType.SINGLE_ROW_SELECTION,
@@ -145,6 +147,10 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDoubleClick(int index) {
+    if (this.widget.disabled) {
+      return;
+    }
+
     setState(() {
       if (_targetIndex2 != null) {
         _widthForViewIncludeLast[_targetIndex2!] = _widthForView[_targetIndex2!] = -1;
@@ -154,6 +160,10 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDragStart(int index, DragDownDetails detail) {
+    if (this.widget.disabled) {
+      return;
+    }
+
     if (index < _widthForCalculate.length &&
         detail.localPosition.dx > _widthForCalculate[index] - 2 &&
         detail.localPosition.dx <= _widthForCalculate[index]) {
@@ -174,6 +184,10 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDragMove(int index, DragUpdateDetails detail) {
+    if (this.widget.disabled) {
+      return;
+    }
+
     setState(() {
       if (_targetIndex != null && _currentPos != null && _mouseDiffPos != null) {
         _currentPos = _currentPos! + detail.delta.dx;
@@ -198,6 +212,10 @@ class _AppTable extends State<AppTable> {
   }
 
   void _onDragStop(int index) {
+    if (this.widget.disabled) {
+      return;
+    }
+
     setState(() {
       _targetIndex = null;
       _currentPos = null;
@@ -208,10 +226,18 @@ class _AppTable extends State<AppTable> {
   bool _multiSelectionKeyPressed = false;
 
   void _unselectRows() {
+    if (this.widget.disabled) {
+      return;
+    }
+
     this.widget.onSelected?.call([]);
   }
 
   void _onCellClick(int row) {
+    if (this.widget.disabled) {
+      return;
+    }
+
     List<int> _selectedRows = [...this.widget.selectedRows];
 
     setState(() {
@@ -544,6 +570,7 @@ class _AppTable extends State<AppTable> {
 
   Widget _buildTable(BuildContext context) {
     return MacosStyleTable(
+      disabled: this.widget.disabled,
       selectedRows: widget.selectedRows,
       columnWidths: [
         ..._widthForView.map((e) => e < 0 ? IntrinsicColumnWidth() : FixedColumnWidth(e)).toList(),

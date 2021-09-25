@@ -29,6 +29,7 @@ class MacosStyleRenderTable extends RenderBox {
   MacosStyleRenderTable({
     int? columns,
     int? rows,
+    bool disabled = false,
     List<int> selectedRows = const [],
     Map<int, TableColumnWidth>? columnWidths,
     TableColumnWidth defaultColumnWidth = const FlexColumnWidth(1.0),
@@ -50,6 +51,7 @@ class MacosStyleRenderTable extends RenderBox {
         _textDirection = textDirection,
         _columns = columns ?? (headers.length),
         _rows = rows ?? 0,
+        _disabled = disabled,
         _selectedRows = selectedRows,
         _columnWidths = columnWidths ?? HashMap<int, TableColumnWidth>(),
         _defaultColumnWidth = defaultColumnWidth,
@@ -124,6 +126,13 @@ class MacosStyleRenderTable extends RenderBox {
     }
     _rows = value;
     _children.length = columns * rows;
+    markNeedsLayout();
+  }
+
+  bool get disabled => _disabled;
+  bool _disabled;
+  set disabled(bool value) {
+    _disabled = value;
     markNeedsLayout();
   }
 
@@ -1104,7 +1113,9 @@ class MacosStyleRenderTable extends RenderBox {
       context.canvas.drawRect(
         rect,
         Paint()
-          ..color = _painter.selectedRowBackgroundColor
+          ..color = this.disabled
+              ? _painter.disabledSelectedRowBackgroundColor
+              : _painter.selectedRowBackgroundColor
           ..style = PaintingStyle.fill,
       );
       context.canvas.restore();

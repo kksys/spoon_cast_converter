@@ -455,6 +455,7 @@ class MacosStylePainter {
   final Color evenRowBackgroundColor;
   final Color oddRowBackgroundColor;
   final Color selectedRowBackgroundColor;
+  final Color disabledSelectedRowBackgroundColor;
 
   const MacosStylePainter({
     required this.headerBackgroundColor,
@@ -463,6 +464,7 @@ class MacosStylePainter {
     required this.evenRowBackgroundColor,
     required this.oddRowBackgroundColor,
     required this.selectedRowBackgroundColor,
+    required this.disabledSelectedRowBackgroundColor,
   });
 }
 
@@ -615,6 +617,7 @@ class MacosStyleTable extends RenderObjectWidget {
   /// arguments must not be null.
   MacosStyleTable({
     Key? key,
+    this.disabled = false,
     this.selectedRows = const <int>[],
     this.headers = const <MacosStyleTableColumn>[],
     this.children = const <MacosStyleTableRow>[],
@@ -683,6 +686,8 @@ class MacosStyleTable extends RenderObjectWidget {
       return true;
     }());
   }
+
+  final bool disabled;
 
   final List<int> selectedRows;
 
@@ -763,6 +768,7 @@ class MacosStyleTable extends RenderObjectWidget {
     return MacosStyleRenderTable(
       columns: headers.length,
       rows: children.length,
+      disabled: disabled,
       selectedRows: selectedRows,
       columnWidths: columnWidths,
       defaultColumnWidth: defaultColumnWidth,
@@ -786,6 +792,7 @@ class MacosStyleTable extends RenderObjectWidget {
     renderObject
       ..setChangedColumnWidthCallback(this.onChangeColumnWidth)
       ..setChangedViewportSizeCallback(this.onChangedViewportSize)
+      ..disabled = disabled
       ..selectedRows = selectedRows
       ..columnWidths = columnWidths
       ..defaultColumnWidth = defaultColumnWidth
@@ -807,6 +814,7 @@ class MacosStyleTable extends RenderObjectWidget {
     Color evenRowBackgroundColor = Color.fromRGBO(0x26, 0x20, 0x23, 1.0);
     Color oddRowBackgroundColor = Color.fromRGBO(0x30, 0x2a, 0x2d, 1.0);
     Color selectedRowBackgroundColor = Color.fromRGBO(0x1f, 0x59, 0xc8, 1.0);
+    Color disabledSelectedRowBackgroundColor = Color.fromRGBO(0x45, 0x46, 0x46, 1.0);
 
     if (brightness != Brightness.dark) {
       headerBackgroundColor = Color.fromRGBO(0xff, 0xff, 0xff, 1.0);
@@ -815,6 +823,7 @@ class MacosStyleTable extends RenderObjectWidget {
       evenRowBackgroundColor = Color.fromRGBO(0xff, 0xff, 0xff, 1.0);
       oddRowBackgroundColor = Color.fromRGBO(0xf4, 0xf5, 0xf5, 1.0);
       selectedRowBackgroundColor = Color.fromRGBO(0x25, 0x64, 0xd9, 1.0);
+      disabledSelectedRowBackgroundColor = Color.fromRGBO(0xdc, 0xdc, 0xdd, 1.0);
     }
 
     return MacosStylePainter(
@@ -824,6 +833,7 @@ class MacosStyleTable extends RenderObjectWidget {
       evenRowBackgroundColor: evenRowBackgroundColor,
       oddRowBackgroundColor: oddRowBackgroundColor,
       selectedRowBackgroundColor: selectedRowBackgroundColor,
+      disabledSelectedRowBackgroundColor: disabledSelectedRowBackgroundColor,
     );
   }
 }

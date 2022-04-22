@@ -7,7 +7,6 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:macos_ui/macos_ui.dart';

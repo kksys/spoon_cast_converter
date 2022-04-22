@@ -1,6 +1,5 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 // Package imports:
 import 'package:file_selector/file_selector.dart';

@@ -5,7 +5,6 @@ import 'dart:math' as math;
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 
 // Project imports:
 import 'package:spoon_cast_converter/components/atom/table/constants.dart';

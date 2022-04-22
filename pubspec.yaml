@@ -29,13 +29,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  file_selector_macos: ^0.0.4+1
+  file_selector_macos: ^0.8.2
   file_selector: ^0.8.2
   ffi: ^1.1.2
   redux: ^5.0.0
-  flutter_redux: ^0.8.2
+  flutter_redux: ^0.9.0
   import_sorter: ^4.6.0
-  macos_ui: ^0.7.0
+  macos_ui: ^0.12.4+3
   intl: ^0.17.0
   flutter_hooks: ^0.18.0
   package_info: ^2.0.2
@@ -47,16 +47,16 @@ dependencies:
 
   window_size:
     git:
-      url: git://github.com/google/flutter-desktop-embedding.git
+      url: https://github.com/google/flutter-desktop-embedding.git
       path: plugins/window_size
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_oss_licenses: ^1.0.1
+  flutter_oss_licenses: ^2.0.0+1
   build_runner: ^2.1.1
-  json_serializable: ^4.1.4
+  json_serializable: ^6.1.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

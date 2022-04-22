@@ -26,7 +26,7 @@ VPX_VERSION="1.10.0"
 VPX_REPOSITORY="https://chromium.googlesource.com/webm/libvpx"
 LZMA_VERSION="5.2.5"
 LZMA_REPOSITORY="https://git.tukaani.org/xz.git"
-FFMPEG_VERSION="n4.4"
+FFMPEG_VERSION="n5.0.1"
 FFMPEG_PACKAGE="https://github.com/FFmpeg/FFmpeg/archive/refs/tags/${FFMPEG_VERSION}.tar.gz"
 
 #                             +------------------------------------------------+-----------------------------------------+
@@ -125,7 +125,7 @@ prepare_aom_sources() {
         echo "set(CMAKE_SYSTEM_PROCESSOR \"arm64\")" > ${TOOLCHAIN_PATH}
         echo "set(CMAKE_SYSTEM_NAME \"Darwin\")" >> ${TOOLCHAIN_PATH}
         echo "set(CMAKE_OSX_ARCHITECTURES \"arm64\")" >> ${TOOLCHAIN_PATH}
-        echo "set(CMAKE_C_COMPILER_ARG1 \"-arch arm64 -target aarch64-apple-darwin\")" >> ${TOOLCHAIN_PATH}
+        echo "set(CMAKE_C_COMPILER_ARG1 \"-mmacosx-version-min=$OSX_VERSION -arch arm64 -target aarch64-apple-darwin\")" >> ${TOOLCHAIN_PATH}
         echo "set(CMAKE_CXX_COMPILER_ARG1 \"-arch arm64 -target aarch64-apple-darwin\")" >> ${TOOLCHAIN_PATH}
         echo "# Apple tools always complain in 32 bit mode without PIC." >> ${TOOLCHAIN_PATH}
         echo "set(CONFIG_PIC 1 CACHE STRING \"\")" >> ${TOOLCHAIN_PATH}
@@ -138,7 +138,7 @@ prepare_aom_sources() {
         echo "set(CMAKE_SYSTEM_PROCESSOR \"x86_64\")" > ${TOOLCHAIN_PATH}
         echo "set(CMAKE_SYSTEM_NAME \"Darwin\")" >> ${TOOLCHAIN_PATH}
         echo "set(CMAKE_OSX_ARCHITECTURES \"x86_64\")" >> ${TOOLCHAIN_PATH}
-        echo "set(CMAKE_C_COMPILER_ARG1 \"-arch x86_64 -target x86_64-apple-darwin\")" >> ${TOOLCHAIN_PATH}
+        echo "set(CMAKE_C_COMPILER_ARG1 \"-mmacosx-version-min=$OSX_VERSION -arch x86_64 -target x86_64-apple-darwin\")" >> ${TOOLCHAIN_PATH}
         echo "set(CMAKE_CXX_COMPILER_ARG1 \"-arch x86_64 -target x86_64-apple-darwin\")" >> ${TOOLCHAIN_PATH}
         echo "# Apple tools always complain in 32 bit mode without PIC." >> ${TOOLCHAIN_PATH}
         echo "set(CONFIG_PIC 1 CACHE STRING \"\")" >> ${TOOLCHAIN_PATH}
@@ -848,7 +848,7 @@ build_lzma() {
             --disable-static \
             --enable-shared
 
-        make check
+        make -j4 VERBOSE=1
         make install
 
         export PKG_CONFIG_PATH=${OLD_PKG_CONFIG_PATH}
@@ -928,6 +928,12 @@ build_ffmpeg() {
             --disable-indev=jack \
             --enable-opencl \
             --enable-videotoolbox \
+            --disable-libxcb \
+            --disable-libxcb_shape \
+            --disable-libxcb_shm \
+            --disable-libxcb_xfixes \
+            --disable-xlib \
+            --disable-sdl2 \
             --disable-htmlpages
 
         make -j4 VERBOSE=1
@@ -967,11 +973,11 @@ generate_fat_binary() {
 
     install_name_tool -id "@rpath/libaom.3.1.1.dylib" libaom.3.1.1.dylib
 
-    install_name_tool -id "@rpath/libavcodec.58.134.100.dylib" libavcodec.58.134.100.dylib
+    install_name_tool -id "@rpath/libavcodec.59.18.100.dylib" libavcodec.59.18.100.dylib
     for ARCH in $(echo "x86_64" "arm64"); do
         install_name_tool \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.4.dylib" "@rpath/libswresample.4.3.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.57.dylib" "@rpath/libavutil.57.17.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
@@ -979,7 +985,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoradec.1.dylib" "@rpath/libtheoradec.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libogg.0.dylib" "@rpath/libogg.0.dylib" \
-            libavcodec.58.134.100.dylib
+            libavcodec.59.18.100.dylib
     done
     install_name_tool \
         -change "libvpx.6.dylib" "@rpath/libvpx.6.dylib" \
@@ -987,17 +993,17 @@ generate_fat_binary() {
         -change "@rpath/libaom.3.dylib" "@rpath/libaom.3.1.1.dylib" \
         -change "libvorbis.0.4.9.dylib" "@rpath/libvorbis.0.4.9.dylib" \
         -change "libvorbisenc.2.0.12.dylib" "@rpath/libvorbisenc.2.0.12.dylib" \
-        libavcodec.58.134.100.dylib
+        libavcodec.59.18.100.dylib
 
-    install_name_tool -id "@rpath/libavdevice.58.13.100.dylib" libavdevice.58.13.100.dylib
+    install_name_tool -id "@rpath/libavdevice.59.4.100.dylib" libavdevice.59.4.100.dylib
     for ARCH in $(echo "x86_64" "arm64"); do
         install_name_tool \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavfilter.7.dylib" "@rpath/libavfilter.7.110.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswscale.5.dylib" "@rpath/libswscale.5.9.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavformat.58.dylib" "@rpath/libavformat.58.76.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavcodec.58.dylib" "@rpath/libavcodec.58.134.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavfilter.8.dylib" "@rpath/libavfilter.8.24.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswscale.6.dylib" "@rpath/libswscale.6.4.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavformat.59.dylib" "@rpath/libavformat.59.16.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavcodec.59.dylib" "@rpath/libavcodec.59.18.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.4.dylib" "@rpath/libswresample.4.3.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.57.dylib" "@rpath/libavutil.57.17.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
@@ -1005,7 +1011,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoradec.1.dylib" "@rpath/libtheoradec.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libogg.0.dylib" "@rpath/libogg.0.dylib" \
-            libavdevice.58.13.100.dylib
+            libavdevice.59.4.100.dylib
     done
     install_name_tool \
         -change "libvpx.6.dylib" "@rpath/libvpx.6.dylib" \
@@ -1013,16 +1019,16 @@ generate_fat_binary() {
         -change "@rpath/libaom.3.dylib" "@rpath/libaom.3.1.1.dylib" \
         -change "libvorbis.0.4.9.dylib" "@rpath/libvorbis.0.4.9.dylib" \
         -change "libvorbisenc.2.0.12.dylib" "@rpath/libvorbisenc.2.0.12.dylib" \
-        libavdevice.58.13.100.dylib
+        libavdevice.59.4.100.dylib
 
-    install_name_tool -id "@rpath/libavfilter.7.110.100.dylib" libavfilter.7.110.100.dylib
+    install_name_tool -id "@rpath/libavfilter.8.24.100.dylib" libavfilter.8.24.100.dylib
     for ARCH in $(echo "x86_64" "arm64"); do
         install_name_tool \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswscale.5.dylib" "@rpath/libswscale.5.9.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavformat.58.dylib" "@rpath/libavformat.58.76.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavcodec.58.dylib" "@rpath/libavcodec.58.134.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswscale.6.dylib" "@rpath/libswscale.6.4.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavformat.59.dylib" "@rpath/libavformat.59.16.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavcodec.59.dylib" "@rpath/libavcodec.59.18.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.4.dylib" "@rpath/libswresample.4.3.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.57.dylib" "@rpath/libavutil.57.17.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
@@ -1030,7 +1036,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoradec.1.dylib" "@rpath/libtheoradec.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libogg.0.dylib" "@rpath/libogg.0.dylib" \
-            libavfilter.7.110.100.dylib
+            libavfilter.8.24.100.dylib
     done
     install_name_tool \
         -change "libvpx.6.dylib" "@rpath/libvpx.6.dylib" \
@@ -1038,14 +1044,14 @@ generate_fat_binary() {
         -change "@rpath/libaom.3.dylib" "@rpath/libaom.3.1.1.dylib" \
         -change "libvorbis.0.4.9.dylib" "@rpath/libvorbis.0.4.9.dylib" \
         -change "libvorbisenc.2.0.12.dylib" "@rpath/libvorbisenc.2.0.12.dylib" \
-        libavfilter.7.110.100.dylib
+        libavfilter.8.24.100.dylib
 
-    install_name_tool -id "@rpath/libavformat.58.76.100.dylib" libavformat.58.76.100.dylib
+    install_name_tool -id "@rpath/libavformat.59.16.100.dylib" libavformat.59.16.100.dylib
     for ARCH in $(echo "x86_64" "arm64"); do
         install_name_tool \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavcodec.58.dylib" "@rpath/libavcodec.58.134.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.3.dylib" "@rpath/libswresample.3.9.100.dylib" \
-            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavcodec.59.dylib" "@rpath/libavcodec.59.18.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libswresample.4.dylib" "@rpath/libswresample.4.3.100.dylib" \
+            -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.57.dylib" "@rpath/libavutil.57.17.100.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libdav1d.5.dylib" "@rpath/libdav1d.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/liblzma.5.dylib" "@rpath/liblzma.5.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libmp3lame.0.dylib" "@rpath/libmp3lame.0.dylib" \
@@ -1053,7 +1059,7 @@ generate_fat_binary() {
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoraenc.1.dylib" "@rpath/libtheoraenc.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libtheoradec.1.dylib" "@rpath/libtheoradec.1.dylib" \
             -change "${INSTALL_PATH}/mac-${ARCH}/lib/libogg.0.dylib" "@rpath/libogg.0.dylib" \
-            libavformat.58.76.100.dylib
+            libavformat.59.16.100.dylib
     done
     install_name_tool \
         -change "libvpx.6.dylib" "@rpath/libvpx.6.dylib" \
@@ -1061,18 +1067,18 @@ generate_fat_binary() {
         -change "@rpath/libaom.3.dylib" "@rpath/libaom.3.1.1.dylib" \
         -change "libvorbis.0.4.9.dylib" "@rpath/libvorbis.0.4.9.dylib" \
         -change "libvorbisenc.2.0.12.dylib" "@rpath/libvorbisenc.2.0.12.dylib" \
-        libavformat.58.76.100.dylib
+        libavformat.59.16.100.dylib
 
-    install_name_tool -id "@rpath/libavutil.56.70.100.dylib" libavutil.56.70.100.dylib
+    install_name_tool -id "@rpath/libavutil.57.17.100.dylib" libavutil.57.17.100.dylib
 
-    install_name_tool -id "@rpath/libswresample.3.9.100.dylib" libswresample.3.9.100.dylib
+    install_name_tool -id "@rpath/libswresample.4.3.100.dylib" libswresample.4.3.100.dylib
     for ARCH in $(echo "x86_64" "arm64"); do
-        install_name_tool -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" libswresample.3.9.100.dylib
+        install_name_tool -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.57.dylib" "@rpath/libavutil.57.17.100.dylib" libswresample.4.3.100.dylib
     done
 
-    install_name_tool -id "@rpath/libswscale.5.9.100.dylib" libswscale.5.9.100.dylib
+    install_name_tool -id "@rpath/libswscale.6.4.100.dylib" libswscale.6.4.100.dylib
     for ARCH in $(echo "x86_64" "arm64"); do
-        install_name_tool -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.56.dylib" "@rpath/libavutil.56.70.100.dylib" libswscale.5.9.100.dylib
+        install_name_tool -change "${INSTALL_PATH}/mac-${ARCH}/lib/libavutil.57.dylib" "@rpath/libavutil.57.17.100.dylib" libswscale.6.4.100.dylib
     done
 
     install_name_tool -id "@rpath/libdav1d.5.dylib" libdav1d.5.dylib
@@ -1129,6 +1135,9 @@ clean() {
     for dir in $(echo "mac" "mac-arm64" "mac-x86_64"); do
         rm -rf ./${dir}
     done
+
+    cd ../source
+    rm -rf ./*
 
     cd ..
     rm -rf ./build
@@ -1470,7 +1479,7 @@ main() {
 
     trap 'trap_function' 1 2 3 15
 
-    if [ "a${args[0]}z" == "arebuildz" ]; then
+    if [ "a${args[0]}z" == "acleanz" -o "a${args[0]}z" == "arebuildz" ]; then
         clean
     fi
 

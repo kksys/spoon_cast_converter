@@ -203,7 +203,7 @@ int openOutputFile(const std::string& filePath,
 	int status = 0;
 	AVCodecContext	*avCtx = nullptr;
 	AVIOContext		*ioCtx = nullptr;
-	AVCodec			*outputCodec = nullptr;
+	const AVCodec	*outputCodec = nullptr;
 	AVStream		*stream = nullptr;
 
 	if ((status = avio_open(&ioCtx, filePath.c_str(), AVIO_FLAG_WRITE)) < 0) {
@@ -742,9 +742,6 @@ void FFmpegManager::getFileInfo(const std::string& inputPath, AudioFileDescripti
 
 FFmpegManager::FFmpegManager()
 {
-#if !FF_API_NEXT
-	av_register_all();
-#endif
 }
 
 FFmpegManager::~FFmpegManager()

@@ -40,18 +40,18 @@ class _AppLicenseDialogState extends State<AppLicenseDialog> {
   Widget build(BuildContext context) {
     final AppLocalizations localizations = AppLocalizations.of(context)!;
     final licenses = [
-      ...ossLicenses.values
+      ...ossLicenses
           .map((e) => FlutterLibrariesLicense(
-                name: e['name'],
-                version: e['version'],
-                license: e['license'],
+                name: e.name,
+                version: e.version,
+                license: e.license ?? "",
               ))
           .toList(),
-      ...ffmpegLicenses.values
+      ...ffmpegLicenses
           .map((e) => FlutterLibrariesLicense(
-                name: e['name'],
-                version: e['version'],
-                license: e['license'],
+                name: e.name,
+                version: e.version,
+                license: e.license ?? "",
               ))
           .toList(),
     ];
